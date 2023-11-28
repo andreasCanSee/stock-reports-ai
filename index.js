@@ -33,35 +33,22 @@ function renderTickers() {
     })
 }
 
+const loadingArea = document.querySelector('.loading-panel')
+const apiMessage = document.getElementById('api-message')
 const generateReportBtn = document.querySelector('.generate-report-btn')
 
 generateReportBtn.addEventListener('click', fetchStockData)
 
-const loadingArea = document.querySelector('.loading-panel')
-const apiMessage = document.getElementById('api-message')
-
-async function fetchApiKey() {
-    try {
-      const response = await fetch('http://localhost:3000/api/key');
-      const data = await response.json();
-      return data.apiKey;
-    } catch (error) {
-      console.error('Error fetching API key:', error);
-      throw new Error('Failed to fetch API key from the server.');
-    }
-  }
-  
 async function fetchStockData() {
     document.querySelector('.action-panel').style.display = 'none'
     loadingArea.style.display = 'flex'
     try {
-        const apiKey = await fetchApiKey();
-
         const stockData = await Promise.all(tickersArr.map(async (ticker) => {
-            const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${apiKey}`
-            const response = await fetch(url)
-            const data = await response.text()
-            const status = await response.status
+            const url = `http://localhost:3000/api/stock-data?ticker=${ticker}&from=${dates.startDate}&to=${dates.endDate}`;
+            const response = await fetch (url);
+
+            const data = await response.text();
+            const status = response.status
             if (status === 200) {
                 apiMessage.innerText = 'Creating report...'
                 return data
@@ -69,14 +56,12 @@ async function fetchStockData() {
                 loadingArea.innerText = 'There was an error fetching stock data.'
             }
         }))
-        // fetchReport(stockData.join(''))
         console.log(stockData.join(''))
     } catch(err) {
         loadingArea.innerText = 'There was an error fetching stock data.'
         console.error('error: ', err)
-    }
+    } 
 }
-
 
 /*
 async function fetchReport(data) {
