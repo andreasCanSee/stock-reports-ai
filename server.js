@@ -2,14 +2,19 @@ import express from 'express';
 import fetch from 'node-fetch';
 import cors from 'cors';
 import OpenAI from 'openai';
+import openaiMessages from './openaiMessages.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Ermöglicht das Parsen von JSON-Body in POST-Anfragen
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+})
+
+// Allows parsing of JSON body in POST requests
 app.use(express.json());
 
-// Aktivieren Sie CORS für Ihre Express-Anwendung
+// Enable CORS for your Express application
 app.use(cors());
 /*
     app.use(cors({
@@ -17,46 +22,26 @@ app.use(cors());
     }));
 */
 
-/*
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-})
-
-const messages = [
-  {
-    role: 'system',
-    content: 'You are a helpful general knowledge expert.'
-  },
-  {
-    role: 'system',
-    content: 'Who invented the television?'
-  }
-]
-
 // OpenAI Middleware
-async function callOpenAI() {
-  // Logik, um die OpenAI API anzusteuern
-  const response = await openai.chat.completions.create({
-    model: 'gpt-4',
-    messages: messages
-  })
-  return response
+async function fetchReport(data) {
+
+  const messages = openaiMessages(data);
+
+  // Logic to control the OpenAI API
+  try{
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: messages
+    })
+    return response.choices[0].message.content
+  }
+  catch (err) {
+    console.error('Error bei der OpenAI API-Anfrage:', err);
+    throw err;
+  }
 }
 
-// Neuer Endpunkt für OpenAI-Anfragen
-app.post('/api/generate-text', async (req, res) => {
-  const { prompt } = req.body;
-  try {
-    const openAIResponse = await callOpenAI(prompt);
-    res.json(openAIResponse);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
-});*/
-
-
-// Endpoint, der als Proxy dient
+// Endpoint that serves as a proxy
 app.get('/api/stock-data', async (req, res) => {
   const { ticker, from, to } = req.query; // Parameter aus der URL extrahieren
   const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${from}/${to}`;
@@ -64,32 +49,41 @@ app.get('/api/stock-data', async (req, res) => {
   try {
     const polygonResponse = await fetch(url, {
       headers: {
-        // Hier fügen Sie Ihren API-Schlüssel ein, der im .env gespeichert ist
+        // Insert your API key here, stored in .env
         'Authorization': `Bearer ${process.env.POLYGON_API_KEY}`
       }
     });
 
-    // Überprüfen, ob die Anfrage erfolgreich war
+    // Check if the request was successful
     if (!polygonResponse.ok) {
         const errorBody = await polygonResponse.text();
         console.log(`Antwort-Body bei Fehler: ${errorBody}`);
         throw new Error(`API-Anfrage fehlgeschlagen: ${polygonResponse.statusText}`);
     }
 
-    const data = await polygonResponse.json();
-    res.json(data); // Die Antwort der externen API an das Frontend weiterleiten
+    const stockData = await polygonResponse.json();
 
-    // const openAIResponse = await callOpenAI()
-    // console.log(openAIResponse) 
+     // Requesting analysis from OpenAI
+    const openAIResponse = await fetchReport(JSON.stringify(stockData));
+    res.json(openAIResponse)
+
+    /* Zusammenführen der Polygon-Daten und der OpenAI-Antwort
+    const combinedResponse = {
+      stockData: stockData,
+      openAIAnalysis: openAIResponse 
+    };
+
+    // Senden der kombinierten Antwort an das Frontend
+    res.json(combinedResponse);
+    */
 
   } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
   }
 
-
 });
 
 app.listen(PORT, () => {
-  console.log(`Server läuft auf Port ${PORT}`);
+  console.log(`Server is running on ${PORT}`);
 });
