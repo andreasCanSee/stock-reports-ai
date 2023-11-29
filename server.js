@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { getStockData } from './stockDataApi.js';
-import { fetchReport } from './aiReportApi.js';
+import { getStockData } from './api/stockDataApi.js';
+import { fetchReport } from './api/aiReportApi.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

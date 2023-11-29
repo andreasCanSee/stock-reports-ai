@@ -47,6 +47,10 @@ main {
     padding: 1em 2em;
 }
 
+.output-panel p {
+    text-align: justify;
+}
+
 .loading-panel {
     display: none;
     flex-direction: column;

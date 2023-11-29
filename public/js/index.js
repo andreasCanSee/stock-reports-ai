@@ -1,5 +1,5 @@
 // Importing date utility functions
-import { dates } from './utils/dates.js'
+import { dates } from '../utils/dates.js'
 
 // Array to store ticker symbols entered by the user
 let tickersArr = []
