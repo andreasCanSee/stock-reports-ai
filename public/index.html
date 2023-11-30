@@ -19,10 +19,11 @@
 				<form id="ticker-input-form">
 					<label for="ticker-input"> Add up to 3 stock tickers below to get a super accurate stock predictions report👇 </label>
 					<div class="form-input-control">
-						<input type="text" id="ticker-input" placeholder="MSFT">
-						<button class="add-ticker-btn">
+						<input type="text" id="ticker-input" placeholder="MSFT" autocomplete="off">
+						<button class="add-ticker-btn" disabled>
 							<img src="images/add.svg" class="add-ticker-svg" alt="add"> 
 						</button>
+						<div class="ticker-suggestions"></div>
 					</div>
 				</form>
 				<p class="ticker-choice-display">

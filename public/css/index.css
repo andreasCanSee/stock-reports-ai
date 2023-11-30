@@ -112,6 +112,24 @@ input[type="text"] {
     border-right: none;
 }
 
+.form-input-control {
+    position: relative; /* Damit absolute Positionierung des Kind-Elements relativ zu diesem Element ist */
+}
+
+.ticker-suggestions {
+    position: absolute;
+    top: 100%; /* Setzt das Div direkt unter das Eingabefeld */
+    left: 0;
+    right: 0; /* Stellt sicher, dass die Breite der des Elternelements entspricht */
+    background-color: white; /* Hintergrundfarbe für die Sichtbarkeit */
+    border: 1px solid #ddd; /* Rahmen für die Abgrenzung */
+    z-index: 1000; /* Stellt das Div über andere Elemente */
+}
+
+.ticker-suggestions div {
+    padding: 8px 16px;
+}
+
 /* Buttons */
 
 .add-ticker-btn {
@@ -122,6 +140,13 @@ input[type="text"] {
     padding: 0 .35em;
     cursor: pointer;
     border: 2px solid;
+}
+
+.add-ticker-btn:disabled {
+    /* Stile für den deaktivierten Zustand des Buttons */
+    background-color: grey;
+    color: darkgray;
+    cursor: not-allowed; /* Verändert den Mauszeiger, um Nicht-Klickbarkeit anzuzeigen */
 }
 
 .add-ticker-svg {
