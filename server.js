@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { getStockData } from './api/stockDataApi.js';
 import { fetchReport } from './api/aiReportApi.js';
+import { addReportToCache, getReportFromCache, clearOldCacheEntries } from './api/cacheManager.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,10 +20,23 @@ app.use(cors());
 
 // Endpoint that serves as a proxy
 app.get('/api/stock-data', async (req, res) => {
-  const { ticker, from, to } = req.query; // Parameter aus der URL extrahieren
+  const { ticker, from, to } = req.query; // extract parameters from URL
+
+  clearOldCacheEntries();  // -> node-cron
+
   try{
+    // Check cache
+    const cachedReport = getReportFromCache(ticker);
+    if (cachedReport) {
+      return res.json(cachedReport);
+    }
+
     const stockData = await getStockData(ticker, from, to);
     const openAIResponse = await fetchReport(JSON.stringify(stockData));
+
+    // Store in cache
+    addReportToCache(ticker, openAIResponse);
+
     res.json(openAIResponse);
   }
   catch (error) {

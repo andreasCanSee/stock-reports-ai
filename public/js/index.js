@@ -39,7 +39,6 @@ function renderTickers() {
 
 // Selecting DOM elements for later use
 const loadingArea = document.querySelector('.loading-panel')
-const apiMessage = document.getElementById('api-message')
 const generateReportBtn = document.querySelector('.generate-report-btn')
 
 // Event listener for the 'Generate Report' button
