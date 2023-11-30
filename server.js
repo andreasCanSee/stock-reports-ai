@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import fs from 'fs';
 import { getStockData } from './api/stockDataApi.js';
 import { fetchReport } from './api/aiReportApi.js';
 import { addReportToCache, getReportFromCache, clearOldCacheEntries } from './api/cacheManager.js';
@@ -17,6 +18,31 @@ app.use(cors());
     origin: 'http://127.0.0.1:5500' // Erlauben Sie nur Anfragen von dieser Herkunft
     }));
 */
+const getTickers = () => {
+  // Load the tickers.json file
+  const data = fs.readFileSync('data/tickers.json', 'utf8');
+  return JSON.parse(data);
+};
+
+// API endpoint for ticker search
+app.get('/api/searchTickers', (req, res) => {
+  const query = req.query.q.toLowerCase(); // Search term
+  const tickers = getTickers();
+  
+  // Filter tickers based on the search term, up to 3 results
+  const filteredTickers = [];
+  for (const ticker of tickers) {
+      if (ticker.ticker.toLowerCase().startsWith(query)) {
+          filteredTickers.push(ticker);
+          if (filteredTickers.length === 3) {
+              break; // Stop searching after finding 3 matches
+          }
+      }
+  }
+
+  res.json(filteredTickers);
+});
+
 
 // Endpoint that serves as a proxy
 app.get('/api/stock-data', async (req, res) => {
@@ -45,6 +71,11 @@ app.get('/api/stock-data', async (req, res) => {
   }
 
 });
+
+/*
+app.get('/api/tickers', async (req, res) => {
+
+});*/
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

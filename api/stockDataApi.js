@@ -2,11 +2,11 @@
 import fetch from 'node-fetch';
 
 const getStockData = async (ticker, from, to) => {
-    const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${from}/${to}`;
+  
+    const POLYGON_API_KEY = process.env.POLYGON_API_KEY;
+    const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${from}/${to}?apiKey=${POLYGON_API_KEY}`;
     try {
-      const response = await fetch(url, {
-        headers: { 'Authorization': `Bearer ${process.env.POLYGON_API_KEY}` }
-      });
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`API request failed: ${response.statusText}`);
       }
