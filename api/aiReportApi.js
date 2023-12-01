@@ -8,7 +8,7 @@ const fetchReport = async (data) => {
     const messages = openaiMessages(data);
     try {
         const response = await openai.chat.completions.create({
-            model: 'gpt-4',
+            model: 'gpt-3.5-turbo',
             messages: messages
         });
         return response.choices[0].message.content;

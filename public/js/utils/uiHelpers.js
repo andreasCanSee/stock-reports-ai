@@ -18,17 +18,46 @@ export function displayTickerSuggestions(tickers) {
     });
 }
 
+// Function to show an error message for invalid ticker symbol
+export function showInvalidTickerError() {
+    const label = document.getElementsByTagName('label')[0];
+    label.style.color = 'red';
+    label.textContent = 'Invalid ticker symbol. Please select a valid stock ticker.';
+}
+
+export function showDuplicateTickerError() {
+    const label = document.getElementsByTagName('label')[0];
+    label.style.color = 'red';
+    label.textContent = 'This ticker has already been chosen.';
+}
+
+export function showMaxTickerError() {
+    const label = document.getElementsByTagName('label')[0];
+    label.style.color = 'red';
+    label.textContent = 'You can only choose up to 5 tickers.';
+}
+
 // Function to render ticker symbols on the screen
-export function renderTickers(tickers) {
+export function renderTickers(tickers, onRemoveTicker) {
     const tickerDisplay = document.querySelector('.ticker-choice-display');
 
     tickerDisplay.innerHTML = '' // Clears any existing ticker displays
+    
+    tickers.forEach((ticker, index) => {
+        const tickerBox = document.createElement('span')
+        tickerBox.classList.add('ticker-box')
 
-    tickers.forEach(ticker => {
-        const newTickerSpan = document.createElement('span')
-        newTickerSpan.textContent = ticker
-        newTickerSpan.classList.add('ticker')
-        tickerDisplay.appendChild(newTickerSpan) // Adds each ticker symbol to the display
+        const tickerText = document.createElement('span');
+        tickerText.textContent = ticker;
+        tickerBox.appendChild(tickerText);
+
+        const removeIcon = document.createElement('span');
+        removeIcon.textContent = ' x ';
+        removeIcon.classList.add('remove-icon');
+        removeIcon.addEventListener('click', () => onRemoveTicker(index));
+        tickerBox.appendChild(removeIcon);
+        
+        tickerDisplay.appendChild(tickerBox) // Adds each ticker symbol to the display
     })
 }
 
@@ -79,4 +108,19 @@ export function updateAddButtonState(query, tickers) {
         label.style.color = 'red';
         label.textContent = 'Invalid ticker symbol. Please select a valid stock ticker.';
     }
+}
+
+// Function to show the loading area and hide the action panel
+export function showLoadingArea() {
+    const actionPanel = document.querySelector('.action-panel');
+    const loadingArea = document.querySelector('.loading-panel');
+    actionPanel.style.display = 'none';
+    loadingArea.style.display = 'flex';
+}
+
+// Function to show error messages
+export function showError(errorMessage) {
+    const loadingArea = document.querySelector('.loading-panel');
+    loadingArea.innerText = errorMessage;
+    console.error(errorMessage);
 }

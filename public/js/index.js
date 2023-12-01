@@ -1,7 +1,7 @@
 // Importing date utility functions
 import { dates } from './utils/dates.js'
 import { debounce } from './utils/debounce.js'
-import { renderTickers, displayTickerSuggestions, clearTickerSuggestions, renderReport, updateAddButtonState } from './utils/uiHelpers.js';
+import { renderTickers, displayTickerSuggestions, clearTickerSuggestions, renderReport, updateAddButtonState, showInvalidTickerError, showLoadingArea, showError, showDuplicateTickerError, showMaxTickerError } from './utils/uiHelpers.js';
 
 // Array to store ticker symbols entered by the user
 let chosenTickers = []
@@ -9,7 +9,7 @@ let suggestions = [];
 let tickerSymbols = [];
 
 // Add event listener to the ticker input field with debounce
-document.getElementById('ticker-input').addEventListener('input', debounce(handleTickerInput, 300));
+document.getElementById('ticker-input').addEventListener('input', debounce(handleTickerInput, 200));
 
 // Function to handle ticker input event
 async function handleTickerInput(event){
@@ -28,10 +28,20 @@ async function handleTickerInput(event){
         console.error('Error fetching tickers:', error);
        }
     }else{
-        // Clear suggestions if the query is empty
-        clearTickerSuggestions();
+        clearTickerSuggestions(); // Clear suggestions if the query is empty
+        updateAddButtonState(query, tickerSymbols);
     }
 }
+
+function onRemoveTicker(index){
+    chosenTickers.splice(index, 1)
+    console.log(chosenTickers)
+    renderTickers(chosenTickers, onRemoveTicker)
+
+    generateReportBtn.disabled = chosenTickers.length === 0;
+}
+
+const generateReportBtn = document.querySelector('.generate-report-btn')
 
 // Event listener for form submission
 document.getElementById('ticker-input-form').addEventListener('submit', (e) => {
@@ -39,32 +49,35 @@ document.getElementById('ticker-input-form').addEventListener('submit', (e) => {
     const tickerInput = document.getElementById('ticker-input');
     const newTickerStr = tickerInput.value.toUpperCase(); // Convert to uppercase for consistency
 
-    // Check if the entered ticker symbol is valid
-    if (tickerSymbols.includes(newTickerStr)) {
-        chosenTickers.push(newTickerStr); // Adds the ticker symbol to the array
-        renderTickers(chosenTickers); // Calls function to update the display of tickers
-        tickerInput.value = ''; // Clears the input field
-        clearTickerSuggestions();
-        generateReportBtn.disabled = false; // Enables the 'Generate Report' button
+    // Check if the entered ticker symbol is valid and not already chosen
+    if (tickerSymbols.includes(newTickerStr) && !chosenTickers.includes(newTickerStr)) {
+        // Check if the number of chosen tickers is less than 5
+        if (chosenTickers.length < 5) {
+            chosenTickers.push(newTickerStr); // Adds the ticker symbol to the array
+            renderTickers(chosenTickers, onRemoveTicker); // Calls function to update the display of tickers
+            tickerInput.value = ''; // Clears the input field
+            clearTickerSuggestions();
+            generateReportBtn.disabled = false; // Enables the 'Generate Report' button
+        }
+        else{
+            // Show error if more than 5 tickers are chosen
+            showMaxTickerError();
+        }
+    } else if (chosenTickers.includes(newTickerStr)) {
+            // Show error if ticker is already chosen
+            showDuplicateTickerError();
     } else {
         // If ticker symbol is invalid, display an error message
-        const label = document.getElementsByTagName('label')[0];
-        label.style.color = 'red';
-        label.textContent = 'Invalid ticker symbol. Please select a valid stock ticker.';
+        showInvalidTickerError();
     }
 });
-
-// Selecting DOM elements for later use
-const loadingArea = document.querySelector('.loading-panel')
-const generateReportBtn = document.querySelector('.generate-report-btn')
 
 // Event listener for the 'Generate Report' button
 generateReportBtn.addEventListener('click', fetchStockData)
 
 // Async function to fetch stock data for each ticker symbol
 async function fetchStockData() {
-    document.querySelector('.action-panel').style.display = 'none'
-    loadingArea.style.display = 'flex' // Shows the loading area
+    showLoadingArea();
     try {
         const stockDataPromises = chosenTickers.map(async (ticker) => {
             // Constructs the URL for the API call
@@ -82,12 +95,10 @@ async function fetchStockData() {
                 return { error: err.message };
             }
         });
-            
         const stockData = await Promise.all(stockDataPromises)
         renderReport(stockData) // Calls function to render the fetched data
     } catch(err) {
         // Displays an error message and logs the error if the fetch operation fails
-        loadingArea.innerText = 'There was an error fetching stock data.'
-        console.error('error: ', err)
+        showError('There was an error fetching stock data.');
     } 
 }

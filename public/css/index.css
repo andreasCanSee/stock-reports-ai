@@ -168,10 +168,12 @@ input[type="text"] {
 
 /* ticker display (ensure comma separated) */
 
+/*
 .ticker {
     margin: 0 .1em;
     content: '';
 }
+
 
 .ticker:after {
     content: ',';
@@ -179,6 +181,31 @@ input[type="text"] {
 
 .ticker:last-child::after {
     content: '';
+}
+*/
+
+/* Stil für die Ticker-Anzeige */
+.ticker-choice-display {
+    display: flex; /* Verwendet Flexbox für die Anordnung */
+    gap: 10px; /* Fügt Abstand zwischen den Boxen hinzu */
+}
+
+.ticker-box {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    margin-right: 10px;
+    background-color: #f2f2f2;
+}
+
+.ticker-box .remove-icon {
+    margin-left: 10px;
+    cursor: pointer;
+    color: red;
+    border-left: 1px solid #333;
+    padding-left: 10px;
 }
 
 /* footer */

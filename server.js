@@ -27,7 +27,7 @@ const getTickers = () => {
 // API endpoint for ticker search
 app.get('/api/searchTickers', (req, res) => {
   const query = req.query.q.toLowerCase(); // Search term
-  const tickers = getTickers();
+  const tickers = getTickers(); // TO DO: optimize
   
   // Filter tickers based on the search term, up to 3 results
   const filteredTickers = [];
@@ -71,11 +71,6 @@ app.get('/api/stock-data', async (req, res) => {
   }
 
 });
-
-/*
-app.get('/api/tickers', async (req, res) => {
-
-});*/
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
