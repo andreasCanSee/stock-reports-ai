@@ -1,28 +1,48 @@
 // Function to display ticker suggestions
-export function displayTickerSuggestions(tickers) {
+export function displayTickerSuggestions(tickers, onAddTicker) {
     const tickerInput = document.getElementById('ticker-input');
+    const userInput = tickerInput.value.toLowerCase();
     const suggestionsDiv = document.querySelector('.ticker-suggestions');
-    const tickerSymbols = tickers.map(ticker => ticker.ticker);
 
     suggestionsDiv.innerHTML = ''; // Clear previous suggestions
 
     tickers.forEach(ticker => {
-        const div = document.createElement('div');
-        div.textContent = `${ticker.ticker} - ${ticker.name}`;
-        div.addEventListener('click', () => {
-            tickerInput.value = ticker.ticker;
-            clearTickerSuggestions();
-            updateAddButtonState(ticker.ticker, tickerSymbols);
-        })
-        suggestionsDiv.appendChild(div);
-    });
-}
+        const suggestionDiv = document.createElement('div');
+        suggestionDiv.classList.add('ticker-suggestion');
 
-// Function to show an error message for invalid ticker symbol
-export function showInvalidTickerError() {
-    const label = document.getElementsByTagName('label')[0];
-    label.style.color = 'red';
-    label.textContent = 'Invalid ticker symbol. Please select a valid stock ticker.';
+        const tickerInfo = document.createElement('span');
+
+        // Split the ticker into the highlighted part and the remaining part
+        const highlightedPart = ticker.ticker.substring(0, userInput.length);
+        const remainingPart = ticker.ticker.substring(userInput.length);
+
+        // Create a strong element for the highlighted part
+        const strongElement = document.createElement('strong');
+        strongElement.textContent = highlightedPart;
+
+        // Create an italicized element for the company name
+        const emElement = document.createElement('em');
+        emElement.textContent = ticker.name;
+
+        // Assemble the tickerInfo element
+        tickerInfo.appendChild(strongElement);
+        tickerInfo.appendChild(document.createTextNode(remainingPart + " - "));
+        tickerInfo.appendChild(emElement);
+        
+        suggestionDiv.appendChild(tickerInfo);
+
+        const addButton = document.createElement('button');
+        addButton.textContent = 'ADD';
+        addButton.classList.add('add-ticker-suggestion-btn');
+        addButton.addEventListener('click', () => {
+            onAddTicker(ticker.ticker);
+            clearTickerSuggestions();
+            tickerInput.value = '';
+        });
+        suggestionDiv.appendChild(addButton);
+
+        suggestionsDiv.appendChild(suggestionDiv);
+    });
 }
 
 export function showDuplicateTickerError() {
@@ -93,21 +113,6 @@ export function renderReport(reports) {
             outputArea.style.display = 'flex' // Makes the output area visible
         }
     })
-}
-
-export function updateAddButtonState(query, tickers) {
-    const addButton = document.querySelector('.add-ticker-btn');
-    const label = document.getElementsByTagName('label')[0];
-
-    if(tickers.includes(query.toUpperCase())) {
-        addButton.disabled = false;
-        label.style.color = 'initial';
-        label.textContent = 'Add up to 3 stock tickers below to get a super accurate stock predictions report👇';
-    } else {
-        addButton.disabled = true;
-        label.style.color = 'red';
-        label.textContent = 'Invalid ticker symbol. Please select a valid stock ticker.';
-    }
 }
 
 // Function to show the loading area and hide the action panel

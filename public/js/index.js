@@ -1,12 +1,33 @@
 // Importing date utility functions
 import { dates } from './utils/dates.js'
 import { debounce } from './utils/debounce.js'
-import { renderTickers, displayTickerSuggestions, clearTickerSuggestions, renderReport, updateAddButtonState, showInvalidTickerError, showLoadingArea, showError, showDuplicateTickerError, showMaxTickerError } from './utils/uiHelpers.js';
+import { renderTickers, displayTickerSuggestions, clearTickerSuggestions, renderReport, showLoadingArea, showError, showDuplicateTickerError, showMaxTickerError } from './utils/uiHelpers.js';
 
 // Array to store ticker symbols entered by the user
 let chosenTickers = []
 let suggestions = [];
 let tickerSymbols = [];
+
+const generateReportBtn = document.querySelector('.generate-report-btn')
+
+function onAddTicker(ticker) {
+    // Check if the maximum number of tickers is reached
+    if (chosenTickers.length >= 5) {
+        showMaxTickerError();
+        return;
+    }
+
+    // Check if the ticker is already selected
+    if (chosenTickers.includes(ticker)) {
+        showDuplicateTickerError();
+        return;
+    }
+
+    // Add ticker and update UI
+    chosenTickers.push(ticker);
+    renderTickers(chosenTickers, onRemoveTicker);
+    generateReportBtn.disabled = false; // Enables the 'Generate Report' button
+}
 
 // Add event listener to the ticker input field with debounce
 document.getElementById('ticker-input').addEventListener('input', debounce(handleTickerInput, 200));
@@ -22,14 +43,12 @@ async function handleTickerInput(event){
         }
         suggestions = await response.json();
         tickerSymbols = suggestions.map(suggestion => suggestion.ticker); // Speichert nur die Ticker-Symbole
-        displayTickerSuggestions(suggestions);
-        updateAddButtonState(query, tickerSymbols);
+        displayTickerSuggestions(suggestions, onAddTicker);
        }catch(error){
         console.error('Error fetching tickers:', error);
        }
     }else{
         clearTickerSuggestions(); // Clear suggestions if the query is empty
-        updateAddButtonState(query, tickerSymbols);
     }
 }
 
@@ -40,37 +59,6 @@ function onRemoveTicker(index){
 
     generateReportBtn.disabled = chosenTickers.length === 0;
 }
-
-const generateReportBtn = document.querySelector('.generate-report-btn')
-
-// Event listener for form submission
-document.getElementById('ticker-input-form').addEventListener('submit', (e) => {
-    e.preventDefault(); // Prevents the default form submission behavior
-    const tickerInput = document.getElementById('ticker-input');
-    const newTickerStr = tickerInput.value.toUpperCase(); // Convert to uppercase for consistency
-
-    // Check if the entered ticker symbol is valid and not already chosen
-    if (tickerSymbols.includes(newTickerStr) && !chosenTickers.includes(newTickerStr)) {
-        // Check if the number of chosen tickers is less than 5
-        if (chosenTickers.length < 5) {
-            chosenTickers.push(newTickerStr); // Adds the ticker symbol to the array
-            renderTickers(chosenTickers, onRemoveTicker); // Calls function to update the display of tickers
-            tickerInput.value = ''; // Clears the input field
-            clearTickerSuggestions();
-            generateReportBtn.disabled = false; // Enables the 'Generate Report' button
-        }
-        else{
-            // Show error if more than 5 tickers are chosen
-            showMaxTickerError();
-        }
-    } else if (chosenTickers.includes(newTickerStr)) {
-            // Show error if ticker is already chosen
-            showDuplicateTickerError();
-    } else {
-        // If ticker symbol is invalid, display an error message
-        showInvalidTickerError();
-    }
-});
 
 // Event listener for the 'Generate Report' button
 generateReportBtn.addEventListener('click', fetchStockData)

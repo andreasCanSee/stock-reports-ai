@@ -109,7 +109,6 @@ label {
 input[type="text"] {
     padding: 1em;
     border: 2px solid black;
-    border-right: none;
 }
 
 .form-input-control {
@@ -126,8 +125,20 @@ input[type="text"] {
     z-index: 1000; /* Stellt das Div über andere Elemente */
 }
 
+.add-ticker-suggestion-btn {
+    /* Ihr Button-Styling */
+    margin-left: 10px;
+    cursor: pointer;
+}
+
 .ticker-suggestions div {
     padding: 8px 16px;
+    cursor: pointer;
+}
+
+.ticker-suggestions div:hover {
+    background-color: #333;
+    color: white;
 }
 
 /* Buttons */
