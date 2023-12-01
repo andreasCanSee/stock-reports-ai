@@ -1,8 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
-import { getStockData } from './api/stockDataApi.js';
-import { fetchReport } from './api/aiReportApi.js';
+import { fetchStockData } from './api/stockDataApi.js'
+import { fetchOpenAIResponse } from './api/openAIHelper.js'
+import { getStockDataReportMessages, getCompanyInfoMessages, getCompanyLinksInfoMessages } from './api/openaiMessages.js'
 import { addReportToCache, getReportFromCache, clearOldCacheEntries } from './api/cacheManager.js';
 
 const app = express();
@@ -25,7 +26,7 @@ const getTickers = () => {
 };
 
 // API endpoint for ticker search
-app.get('/api/searchTickers', (req, res) => {
+app.get('/api/ticker-search', (req, res) => {
   const query = req.query.q.toLowerCase(); // Search term
   const tickers = getTickers(); // TO DO: optimize
   
@@ -43,7 +44,6 @@ app.get('/api/searchTickers', (req, res) => {
   res.json(filteredTickers);
 });
 
-
 // Endpoint that serves as a proxy
 app.get('/api/stock-data', async (req, res) => {
   const { ticker, from, to } = req.query; // extract parameters from URL
@@ -51,26 +51,99 @@ app.get('/api/stock-data', async (req, res) => {
   clearOldCacheEntries();  // -> node-cron
 
   try{
+    
     // Check cache
     const cachedReport = getReportFromCache(ticker);
     if (cachedReport) {
-      return res.json(cachedReport);
+      return res.json({ 
+        status: "success",
+        data: {
+          ticker: ticker,
+          report: cachedReport
+        }
+      });
     }
 
-    const stockData = await getStockData(ticker, from, to);
-    const openAIResponse = await fetchReport(JSON.stringify(stockData));
+    const stockData = await fetchStockData(ticker, from, to);
+
+    const stockDataMessages = getStockDataReportMessages(JSON.stringify(stockData));
+    const stockReportResponse = await fetchOpenAIResponse(stockDataMessages);
 
     // Store in cache
-    addReportToCache(ticker, openAIResponse);
+    addReportToCache(ticker, stockReportResponse);
 
-    res.json(openAIResponse);
+    res.json({ 
+      status: "success",
+      data: {
+        ticker: ticker,
+        report: stockReportResponse
+      }
+    });
   }
+
   catch (error) {
         console.error(error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: "error", message: "Internal server error" });
   }
 
 });
+
+app.get('/api/company-info', async (req, res) => {
+
+  const { q: companyName } = req.query;
+
+  if (!companyName) {
+    return res.status(400).json({ error: 'Company name is required' });
+  }
+
+  try {
+    const companyInfoMessages = getCompanyInfoMessages(companyName);
+    const companyInfoResponse = await fetchOpenAIResponse(companyInfoMessages);
+    res.json({ 
+      status: "success",
+      data: {
+        companyName: companyName,
+        description: companyInfoResponse
+      }
+    });
+} catch (err) {
+    console.error('Error fetching company info:', err);
+    res.status(500).json({ status: "error", message: "Internal server error" });
+}
+});
+
+const parseLinksResponse = (responseText) => {
+  const bulletPoints = responseText.split('\n');
+  return bulletPoints.map(point => {
+      const [description, link] = point.split(': ').map(part => part.trim());
+      const cleanedDescription = description.replace('- ', '');
+      return { description: cleanedDescription, link };
+  });
+};
+
+app.get('/api/company-links', async (req, res) => {
+  const { q: companyName } = req.query;
+
+  if (!companyName) {
+    return res.status(400).json({ error: 'Company name is required' });
+  }
+
+  try {
+    const companyLinksMessages = getCompanyLinksInfoMessages(companyName);
+    const linksInfoResponse = await fetchOpenAIResponse(companyLinksMessages);
+    const parsedLinks = parseLinksResponse(linksInfoResponse);
+    res.json({ 
+      status: "success",
+      data: {
+        companyName: companyName,
+        links: parsedLinks
+      }
+    });
+  } catch (err) {
+    console.error('Error fetching company links:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

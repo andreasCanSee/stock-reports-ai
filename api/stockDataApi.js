@@ -1,7 +1,7 @@
 // using the Polygon API
 import fetch from 'node-fetch';
 
-const getStockData = async (ticker, from, to) => {
+const fetchStockData = async (ticker, from, to) => {
   
     const POLYGON_API_KEY = process.env.POLYGON_API_KEY;
     const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${from}/${to}?apiKey=${POLYGON_API_KEY}`;
@@ -17,4 +17,4 @@ const getStockData = async (ticker, from, to) => {
     }
   };
   
-  export { getStockData };
+  export { fetchStockData };

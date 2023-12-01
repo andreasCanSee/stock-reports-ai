@@ -1,11 +1,8 @@
-// Using GPT-4 from OpenAi
 import OpenAI from 'openai';
-import openaiMessages from './openaiMessages.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const fetchReport = async (data) => {
-    const messages = openaiMessages(data);
+const fetchOpenAIResponse = async (messages) => {
     try {
         const response = await openai.chat.completions.create({
             model: 'gpt-3.5-turbo',
@@ -18,4 +15,4 @@ const fetchReport = async (data) => {
     }
 };
 
-export { fetchReport };
+export { fetchOpenAIResponse };

@@ -6,7 +6,6 @@ import { renderTickers, displayTickerSuggestions, clearTickerSuggestions, render
 // Array to store ticker symbols entered by the user
 let chosenTickers = []
 let suggestions = [];
-let tickerSymbols = [];
 
 const generateReportBtn = document.querySelector('.generate-report-btn')
 
@@ -37,12 +36,11 @@ async function handleTickerInput(event){
     const query = event.target.value;
     if(query.length>0){
        try{
-        const response = await fetch(`http://localhost:3000/api/searchTickers?q=${query}`);
+        const response = await fetch(`http://localhost:3000/api/ticker-search?q=${query}`);
         if (!response.ok) {
             throw new Error(`API request failed: ${response.statusText}`);
         }
         suggestions = await response.json();
-        tickerSymbols = suggestions.map(suggestion => suggestion.ticker); // Speichert nur die Ticker-Symbole
         displayTickerSuggestions(suggestions, onAddTicker);
        }catch(error){
         console.error('Error fetching tickers:', error);
@@ -54,7 +52,6 @@ async function handleTickerInput(event){
 
 function onRemoveTicker(index){
     chosenTickers.splice(index, 1)
-    console.log(chosenTickers)
     renderTickers(chosenTickers, onRemoveTicker)
 
     generateReportBtn.disabled = chosenTickers.length === 0;
@@ -75,8 +72,13 @@ async function fetchStockData() {
                 if (!response.ok) {
                     throw new Error(`Error fetching data for ticker ${ticker}: ${response.statusText}`);
                 }
-                const data = await response.text(); // Parses the response text
-                return data
+
+                const jsonResponse = await response.json(); // Parses the response as JSON
+                if (jsonResponse.status === "success") {
+                    return jsonResponse.data.report; // Access the report data
+                } else {
+                    throw new Error(jsonResponse.message || "Unknown error occurred");
+                }
             }
             catch(err){
                 console.error('Error in API request:', err);
