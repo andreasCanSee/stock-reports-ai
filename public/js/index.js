@@ -4,37 +4,37 @@ import { debounce } from './utils/debounce.js'
 import { renderTickers, displayTickerSuggestions, clearTickerSuggestions, renderReport, showLoadingArea, showError, showDuplicateTickerError, showMaxTickerError } from './utils/uiHelpers.js';
 import { initializeBackToSelectionButton } from './utils/uiHelpers.js';
 
-// Array to store ticker symbols entered by the user
-let chosenTickers = []
-let suggestions = [];
+// Array to store ticker symbols entered by the user and corresponding company name
+let selectedStocks = []; // Elements: { ticker: "AAPL", name: "Apple Inc." }
 
 initializeBackToSelectionButton();
 const generateReportBtn = document.querySelector('.generate-report-btn')
 
-function onAddTicker(ticker) {
+function onAddTicker(stock) {
     // Check if the maximum number of tickers is reached
-    if (chosenTickers.length >= 5) {
+    if (selectedStocks.length >= 5) {
         showMaxTickerError();
         return;
     }
 
     // Check if the ticker is already selected
-    if (chosenTickers.includes(ticker)) {
+    if (selectedStocks.some(s => s.ticker === stock.ticker)) {
         showDuplicateTickerError();
         return;
     }
 
     // Add ticker and update UI
-    chosenTickers.push(ticker);
-    renderTickers(chosenTickers, onRemoveTicker);
+    selectedStocks.push(stock);
+    const tickers = selectedStocks.map(stock => stock.ticker); 
+    renderTickers(tickers, onRemoveTicker);
     generateReportBtn.disabled = false; // Enables the 'Generate Report' button
 }
 
 function onRemoveTicker(index){
-    chosenTickers.splice(index, 1)
-    renderTickers(chosenTickers, onRemoveTicker)
-
-    generateReportBtn.disabled = chosenTickers.length === 0;
+    selectedStocks.splice(index, 1)
+    const tickers = selectedStocks.map(stock => stock.ticker)
+    renderTickers(tickers, onRemoveTicker)
+    generateReportBtn.disabled = selectedStocks.length === 0;
 }
 
 // Add event listener to the ticker input field with debounce
@@ -49,8 +49,8 @@ async function handleTickerInput(event){
         if (!response.ok) {
             throw new Error(`API request failed: ${response.statusText}`);
         }
-        suggestions = await response.json();
-        displayTickerSuggestions(suggestions, onAddTicker);
+        const suggestedStocks = await response.json();
+        displayTickerSuggestions(suggestedStocks, onAddTicker);
        }catch(error){
         console.error('Error fetching tickers:', error);
        }
@@ -66,9 +66,9 @@ generateReportBtn.addEventListener('click', fetchStockData)
 async function fetchStockData() {
     showLoadingArea();
     try {
-        const stockDataPromises = chosenTickers.map(async (ticker) => {
+        const stockDataPromises = selectedStocks.map(async (stock) => {
             // Constructs the URL for the API call
-            const url = `http://localhost:3000/api/stock-data/generate-report?ticker=${ticker}&from=${dates.startDate}&to=${dates.endDate}`;
+            const url = `http://localhost:3000/api/stock-data/generate-report?ticker=${stock.ticker}&from=${dates.startDate}&to=${dates.endDate}`;
             try {
                 const response = await fetch(url); // Fetches data from the API
                 if (!response.ok) {
@@ -77,7 +77,7 @@ async function fetchStockData() {
 
                 const jsonResponse = await response.json(); // Parses the response as JSON
                 if (jsonResponse.status === "success") {
-                    return jsonResponse.data.report; // Access the report data
+                    return jsonResponse.data; // Access the report data
                 } else {
                     throw new Error(jsonResponse.message || "Unknown error occurred");
                 }
@@ -87,12 +87,56 @@ async function fetchStockData() {
                 return { error: err.message };
             }
         });
-        const stockData = await Promise.all(stockDataPromises)
-        renderReport(stockData) // Calls function to render the fetched data
+
+        const stockReports = await Promise.all(stockDataPromises)
+        const stockData = stockReports.map(element => ({
+            ticker: element.ticker,
+            name: selectedStocks.find(stock => stock.ticker === element.ticker).name,
+            report: element.report
+        }));
+
+        renderReport(stockData, fetchCompanyInfo, fetchCompanyLinks); // Calls function to render the fetched data
     } catch(err) {
         // Displays an error message and logs the error if the fetch operation fails
         showError('There was an error fetching stock data.');
     } 
+}
+
+// Function to fetch company information for a specific company
+async function fetchCompanyInfo(companyName){
+    try {
+        const response = await fetch(`http://localhost:3000/api/company/info?q=${companyName}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching company info for ${companyName}: ${response.statusText}`);
+        }
+        const jsonResponse = await response.json();
+        if (jsonResponse.status === "success") {
+            return jsonResponse.data.description; 
+        } else {
+            throw new Error(jsonResponse.message || "Unknown error occurred");
+        }
+    } catch (err) {
+        console.error('Error in fetching company info:', err);
+    }
+
+}
+
+// Function to fetch company links for a specific company
+async function fetchCompanyLinks(companyName){
+    try {
+        const response = await fetch(`http://localhost:3000/api/company/links?q=${companyName}`);
+        if (!response.ok) {
+            throw new Error(`Error fetching company info for ${companyName}: ${response.statusText}`);
+        }
+        const jsonResponse = await response.json();
+        if (jsonResponse.status === "success") {
+            return jsonResponse.data.links; 
+        } else {
+            throw new Error(jsonResponse.message || "Unknown error occurred");
+        }
+    } catch (err) {
+        console.error('Error in fetching company info:', err);
+    }
 }
 
 const actionPanel = document.querySelector('.action-panel');
@@ -103,4 +147,3 @@ backToSelectionButton.addEventListener('click', () => {
     actionPanel.style.display = 'block'; // Action-Panel anzeigen
     outputArea.style.display = 'none';  // Output-Panel verstecken
 });
-
