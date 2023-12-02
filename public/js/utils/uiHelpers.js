@@ -91,16 +91,17 @@ export function clearTickerSuggestions() {
 export function renderReport(reports) {
     const loadingArea = document.querySelector('.loading-panel')
     const outputArea = document.querySelector('.output-panel')
+    const reportContainer = document.querySelector('.report-container')
 
     loadingArea.style.display = 'none' // Hides the loading area
-    outputArea.innerHTML = ''; // Clears any existing content in the output area
+    reportContainer.innerHTML = ''; // Clears any existing content in the output area
 
     reports.forEach(report => {
         if(report.error){
             // Handles errors for individual reports
             const errorElement = document.createElement('p');
             errorElement.textContent = report.error;
-            outputArea.appendChild(errorElement);
+            reportContainer.appendChild(errorElement);
         }else{
             // Renders the report content
             const reportElement = document.createElement('p');
@@ -109,8 +110,9 @@ export function renderReport(reports) {
             reportContent = reportContent.replace(/\\n/g, "\n").replace(/(^"|"$)/g, '');
             
             reportElement.textContent = reportContent;
-            outputArea.appendChild(reportElement);
+            reportContainer.appendChild(reportElement);
             outputArea.style.display = 'flex' // Makes the output area visible
+        
         }
     })
 }
@@ -128,4 +130,15 @@ export function showError(errorMessage) {
     const loadingArea = document.querySelector('.loading-panel');
     loadingArea.innerText = errorMessage;
     console.error(errorMessage);
+}
+
+export function initializeBackToSelectionButton() {
+    const backToSelectionButton = document.getElementById('back-to-selection-btn');
+    const actionPanel = document.querySelector('.action-panel');
+    const outputArea = document.querySelector('.output-panel');
+
+    backToSelectionButton.addEventListener('click', () => {
+        actionPanel.style.display = 'block'; // Action-Panel anzeigen
+        outputArea.style.display = 'none';  // Output-Panel verstecken
+    });
 }

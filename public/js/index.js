@@ -2,11 +2,13 @@
 import { dates } from './utils/dates.js'
 import { debounce } from './utils/debounce.js'
 import { renderTickers, displayTickerSuggestions, clearTickerSuggestions, renderReport, showLoadingArea, showError, showDuplicateTickerError, showMaxTickerError } from './utils/uiHelpers.js';
+import { initializeBackToSelectionButton } from './utils/uiHelpers.js';
 
 // Array to store ticker symbols entered by the user
 let chosenTickers = []
 let suggestions = [];
 
+initializeBackToSelectionButton();
 const generateReportBtn = document.querySelector('.generate-report-btn')
 
 function onAddTicker(ticker) {
@@ -92,3 +94,13 @@ async function fetchStockData() {
         showError('There was an error fetching stock data.');
     } 
 }
+
+const actionPanel = document.querySelector('.action-panel');
+const backToSelectionButton = document.getElementById('back-to-selection-btn');
+const outputArea = document.querySelector('.output-panel');
+
+backToSelectionButton.addEventListener('click', () => {
+    actionPanel.style.display = 'block'; // Action-Panel anzeigen
+    outputArea.style.display = 'none';  // Output-Panel verstecken
+});
+
