@@ -28,6 +28,13 @@ function onAddTicker(ticker) {
     generateReportBtn.disabled = false; // Enables the 'Generate Report' button
 }
 
+function onRemoveTicker(index){
+    chosenTickers.splice(index, 1)
+    renderTickers(chosenTickers, onRemoveTicker)
+
+    generateReportBtn.disabled = chosenTickers.length === 0;
+}
+
 // Add event listener to the ticker input field with debounce
 document.getElementById('ticker-input').addEventListener('input', debounce(handleTickerInput, 200));
 
@@ -36,7 +43,7 @@ async function handleTickerInput(event){
     const query = event.target.value;
     if(query.length>0){
        try{
-        const response = await fetch(`http://localhost:3000/api/ticker-search?q=${query}`);
+        const response = await fetch(`http://localhost:3000/api/stock-data/ticker-search?q=${query}`);
         if (!response.ok) {
             throw new Error(`API request failed: ${response.statusText}`);
         }
@@ -50,13 +57,6 @@ async function handleTickerInput(event){
     }
 }
 
-function onRemoveTicker(index){
-    chosenTickers.splice(index, 1)
-    renderTickers(chosenTickers, onRemoveTicker)
-
-    generateReportBtn.disabled = chosenTickers.length === 0;
-}
-
 // Event listener for the 'Generate Report' button
 generateReportBtn.addEventListener('click', fetchStockData)
 
@@ -66,7 +66,7 @@ async function fetchStockData() {
     try {
         const stockDataPromises = chosenTickers.map(async (ticker) => {
             // Constructs the URL for the API call
-            const url = `http://localhost:3000/api/stock-data?ticker=${ticker}&from=${dates.startDate}&to=${dates.endDate}`;
+            const url = `http://localhost:3000/api/stock-data/generate-report?ticker=${ticker}&from=${dates.startDate}&to=${dates.endDate}`;
             try {
                 const response = await fetch(url); // Fetches data from the API
                 if (!response.ok) {
