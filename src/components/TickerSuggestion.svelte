@@ -1,12 +1,17 @@
 <script>
     import { selectedStocks } from '../stockStore'
+    import { userInputStore } from '../userInputStore';
+    
     export let stock;
-    export let userInput;
+
+    let userInputValue;
+    $: userInputValue = $userInputStore; // Reaktiv abonnieren
 
     function addStock(){
         selectedStocks.update(currentStocks => {
-            if (!currentStocks.some(s => s.ticker === stock.ticker)){
-                return [...currentStocks, stock];
+            if (currentStocks.length < 5 && !currentStocks.some(s => s.ticker === stock.ticker)){
+              userInputStore.set("");
+              return [...currentStocks, stock];
             }
             return currentStocks;
         })
@@ -32,7 +37,7 @@
   
   <div class="ticker-suggestion">
     <span>
-      <strong>{stock.ticker.substring(0, userInput.length)}</strong>{stock.ticker.substring(userInput.length)} 
+      <strong>{stock.ticker.substring(0, userInputValue.length)}</strong>{stock.ticker.substring(userInputValue.length)} 
       - <em>{stock.name}</em>
     </span>
     <button class="add-ticker-suggestion-btn" on:click={addStock}>ADD</button>

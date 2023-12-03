@@ -1,7 +1,8 @@
 <script>
     import TickerSuggestion from './TickerSuggestion.svelte';
+    import { userInputStore } from '../userInputStore';
 
-    let userInput = ""; // Current input value
+    $: userInput = $userInputStore; // Reaktive Zuweisung
     let suggestedStocks = [] // List of stocks
   
     async function handleInput() {
@@ -18,11 +19,11 @@
   </script>
 
 
-<input type="text" id="ticker-input" placeholder="Enter ticker" autocomplete="off" bind:value={userInput} on:input={handleInput}/>
+<input type="text" id="ticker-input" placeholder="Enter ticker" autocomplete="off" bind:value={$userInputStore}  on:input={handleInput}/>
 <div class="ticker-suggestions">
     {#if suggestedStocks.length > 0}
         {#each suggestedStocks as stock (stock.ticker)}
-        <TickerSuggestion {stock} {userInput} />
+        <TickerSuggestion {stock} />
         {/each}
     {:else}
       <p>No suggestions available</p>
