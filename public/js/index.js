@@ -118,7 +118,6 @@ async function fetchCompanyInfo(companyName){
     } catch (err) {
         console.error('Error in fetching company info:', err);
     }
-
 }
 
 // Function to fetch company links for a specific company

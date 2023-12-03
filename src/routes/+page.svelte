@@ -1,6 +1,7 @@
 <script>
 import TickerInput from '../components/TickerInput.svelte';
 import TickerDisplay from '../components/TickerDisplay.svelte';
+import Accordion from '../components/Accordion.svelte';
 import { selectedStocks } from '../stockStore';
 import { dates } from '../lib/dateHelpers';
 
@@ -16,12 +17,42 @@ async function generateReports(){
             const jsonResponse = await response.json();
             return jsonResponse.data;
         });
-        const stockReports  = await Promise.all(stockDataPromises);
-        stockReportData = stockReports.map(data => data.report);
+        stockReportData = await Promise.all(stockDataPromises);
+        // stockReportData = stockReports.map(data => data.report);
         currentPanel = 'output';
     } catch(error){
         console.error('Error fetching stock data:', error);
         currentPanel = 'selection';
+    }
+}
+
+async function fetchCompanyInfo(companyName){
+    try{
+        const response = await fetch(`http://localhost:3000/api/company/info?q=${companyName}`);
+        const jsonResponse = await response.json();
+        if (jsonResponse.status === "success") {
+                return jsonResponse.data.description;
+            } else {
+                throw new Error(jsonResponse.message || "Error in fetching company info response");
+            }
+    } catch (err){
+        console.error('Error in fetching company info:', err);
+        return { companyName, description: "Error loading company information." };
+    }
+}
+
+async function fetchCompanyLinks(companyName){
+    try{
+        const response = await fetch(`http://localhost:3000/api/company/links?q=${companyName}`);
+        const jsonResponse = await response.json();
+        if (jsonResponse.status === "success") {
+                return jsonResponse.data.links;
+            } else {
+                throw new Error(jsonResponse.message || "Error in fetching company links response");
+            }
+    } catch (err){
+        console.error('Error in fetching company links:', err);
+        return { companyName, description: "Error loading company links." };
     }
 }
 
@@ -60,6 +91,14 @@ div.user-input {
   width: 300px;
 }
 
+/* footer */
+footer {
+    font-size: 14px;
+    text-align: center;
+}
+
+
+/* Only for Help in Designing */
 div {
     border: black dashed;
 }
@@ -67,6 +106,8 @@ div {
 section {
     border: black dashed;
 }
+
+
 
 
 </style>
@@ -102,8 +143,15 @@ section {
     {:else if currentPanel === 'output'}
         <section class="output-panel">
             <div class="report-container">
-                {#each stockReportData as stockReport}
-                    <p>{stockReport}</p>
+                {#each $selectedStocks as stock}
+                    <p>{stockReportData.find(s => s.ticker === stock.ticker)?.report || "No report available"}</p>
+                    <Accordion 
+                        title={`Company Info [${stock.name}]`}
+                        onToggle={() => fetchCompanyInfo(stock.name)} />
+
+                    <Accordion 
+                        title={`Additional Sources [${stock.name}]`}
+                        onToggle={() => fetchCompanyLinks(stock.name)} />
                 {/each}
             </div>
             <button on:click={backToSelection} class="back-to-selection-btn">
@@ -112,3 +160,7 @@ section {
         </section>
     {/if}
 </main>
+
+<footer>
+    &copy; This is not real financial advice!
+</footer>

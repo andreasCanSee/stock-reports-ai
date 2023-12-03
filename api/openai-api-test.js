@@ -11,12 +11,12 @@ const messages = [
     },
     {
         role: 'user',
-        content: 'Who invented the television?'
+        content: 'Search in the internet for Barbenheimer and explain it to me in 1 sentence.'
     }
 ]
 
 const response = await openai.chat.completions.create({
-    model: 'gpt-4-turbo',
+    model: 'gpt-4',
     messages: messages
 })
 
