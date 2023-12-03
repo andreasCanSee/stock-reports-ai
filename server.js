@@ -26,10 +26,10 @@ try {
 app.use(express.json());
 
 // Enable CORS for your Express application
-//app.use(cors());
-app.use(cors({
-    origin: 'http://127.0.0.1:5500' 
-  }));
+app.use(cors());
+/*app.use(cors({
+    origin: 'http://127.0.0.1:5500', 
+  }));*/
 
 app.use('/api/stock-data', (req, res, next) => {
   req.tickersData = tickersData;

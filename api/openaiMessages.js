@@ -39,8 +39,9 @@ export const getCompanyLinksInfoMessages = (companyName) => {
   return[
     {
       role: 'system',
-      content: `You are a experienced business journalist.
-                Provide a list of 3 links to general information about any given company.
+      content: `You are a experienced business journalist. 
+                If you have knowledge about the given company:
+                provide a list of 3 links to general information about any given company.
                 Follow the pattern for each bullet point:
                 - [short link description]: [link]`
     },
