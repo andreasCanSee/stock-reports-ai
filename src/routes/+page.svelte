@@ -2,6 +2,7 @@
     import TickerInput from '../components/TickerInput.svelte';
     import TickerDisplay from '../components/TickerDisplay.svelte';
     import ReportContainer from '../components/ReportContainer.svelte';
+    import LoadingAnimation from '../components/LoadingAnimation.svelte';
     import { fetchApi } from '../lib/api.js';
     import { dates } from '../lib/dateHelpers';
     import { selectedStocks } from '../stockStore';
@@ -54,7 +55,7 @@
     {:else if currentPanel === 'loading'}
         <section class="loading-panel">
             <img src="loader.svg" alt="loading">
-            <div id="api-message">Querying API...</div>
+            <LoadingAnimation/>
         </section>
     {:else if currentPanel === 'output'}
         <section class="output-panel">
@@ -129,7 +130,7 @@
         letter-spacing: .09em;
         font-size: 105%;
     }
-    
+
     .selection-panel, .output-panel {
         line-height: 1.4em;
         margin: 1.5em 2em;

@@ -47,9 +47,7 @@
         <h3>{stock.ticker}</h3>
         <div class="report-data-container">
             <div class="report-data-text">
-                <p>
-                    {report}
-                </p>
+                <p>{report}</p>
             </div>
             <div class="report-data-icon">
                 <img src={getIconPath(report)} alt="Icon" class="report-icon">

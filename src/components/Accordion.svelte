@@ -1,4 +1,6 @@
 <script>
+    import LoadingAnimation from "./LoadingAnimation.svelte";
+
     export let title;
     export let content = null;
     export let onToggle;
@@ -32,7 +34,7 @@
                     <p>{content}</p>
                 {/if}
             {:else}
-                <p>Querying API...</p> 
+                <LoadingAnimation /> 
             {/if}
         </div>
     {/if}
