@@ -40,4 +40,32 @@
 
 <style>
 
-</style>
+    .accordion-header {
+        background-color: #727070;
+        color: #ffffff;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        text-align: left;
+        border: none;
+        outline: none;
+        transition: 0.4s;
+    }
+    
+    .accordion-header:hover {
+        background-color: #ccc;
+        color: black;
+    }
+    
+    .accordion-content {
+        padding: 18px;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        background-color: white;
+    }
+    
+    .accordion-container {
+        margin-bottom: 15px;
+    }
+    
+    </style>

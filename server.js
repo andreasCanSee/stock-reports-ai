@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
-import companyInfoRoutes from './routes/companyInfoRoutes.js';
-import stockDataRoutes from './routes/stockDataRoutes.js';
+import companyInfoRoutes from './apiRoutes/companyInfoRoutes.js';
+import stockDataRoutes from './apiRoutes/stockDataRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

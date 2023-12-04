@@ -5,13 +5,27 @@ function formatDate(date) {
     return `${yyyy}-${mm}-${dd}`;
 }
 
+// Check if a date is a weekend
+function isWeekend(date){
+    const dayOfWeek = date.getDay();
+    return dayOfWeek === 0 || dayOfWeek === 6;
+}
+
 function getDateNDaysAgo(n) {
     const now = new Date(); // current date and time
-    now.setDate(now.getDate() - n); // subtract n days
+    let daysAgo = n;
+
+    while (daysAgo > 0){
+        now.setDate(now.getDate() - 1); // Move back one day
+        if (!isWeekend(now)) {
+            daysAgo--; // Only decrement if it's a business day
+        }
+
+    }
     return formatDate(now);
 }
 
 export const dates = {
-    startDate: getDateNDaysAgo(3), // alter days to increase/decrease data set
-    endDate: getDateNDaysAgo(1) // leave at 1 to get yesterday's data
+    startDate: getDateNDaysAgo(3), // Last 3 business days
+    endDate: getDateNDaysAgo(1) // Yesterday, assuming it's not a weekend
 }

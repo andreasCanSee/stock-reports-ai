@@ -1,7 +1,7 @@
 <script>
 import TickerInput from '../components/TickerInput.svelte';
 import TickerDisplay from '../components/TickerDisplay.svelte';
-import Accordion from '../components/Accordion.svelte';
+import ReportContainer from '../components/ReportContainer.svelte';
 import { selectedStocks } from '../stockStore';
 import { dates } from '../lib/dateHelpers';
 
@@ -26,91 +26,11 @@ async function generateReports(){
     }
 }
 
-async function fetchCompanyInfo(companyName){
-    try{
-        const response = await fetch(`http://localhost:3000/api/company/info?q=${companyName}`);
-        const jsonResponse = await response.json();
-        if (jsonResponse.status === "success") {
-                return jsonResponse.data.description;
-            } else {
-                throw new Error(jsonResponse.message || "Error in fetching company info response");
-            }
-    } catch (err){
-        console.error('Error in fetching company info:', err);
-        return { companyName, description: "Error loading company information." };
-    }
-}
-
-async function fetchCompanyLinks(companyName){
-    try{
-        const response = await fetch(`http://localhost:3000/api/company/links?q=${companyName}`);
-        const jsonResponse = await response.json();
-        if (jsonResponse.status === "success") {
-                return jsonResponse.data.links;
-            } else {
-                throw new Error(jsonResponse.message || "Error in fetching company links response");
-            }
-    } catch (err){
-        console.error('Error in fetching company links:', err);
-        return { companyName, description: "Error loading company links." };
-    }
-}
-
 function backToSelection(){
     currentPanel = 'selection';
     stockReportData = null;
 }
 </script>
-
-<style>
-header {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin: 0 auto;
-}
-
-header img {
-    width: 500px;
-}
-
-section.selection-panel {
-  display: flex;
-  justify-content: center; /* Center the content horizontally */
-  align-items: center; /* Center the content vertically */
-}
-
-div.user-input {
-  margin-right: 20px; /* Add space between the two divs */
-}
-
-.user-input {
-  display: flex;
-  flex-direction: column;
-  padding: 1em;
-  width: 300px;
-}
-
-/* footer */
-footer {
-    font-size: 14px;
-    text-align: center;
-}
-
-
-/* Only for Help in Designing */
-div {
-    border: black dashed;
-}
-
-section {
-    border: black dashed;
-}
-
-
-
-
-</style>
 
 <header>
     <img src="skyline-data.png" alt="Stock Data Reports">
@@ -142,18 +62,10 @@ section {
         </section>
     {:else if currentPanel === 'output'}
         <section class="output-panel">
-            <div class="report-container">
-                {#each $selectedStocks as stock}
-                    <p>{stockReportData.find(s => s.ticker === stock.ticker)?.report || "No report available"}</p>
-                    <Accordion 
-                        title={`Company Info [${stock.name}]`}
-                        onToggle={() => fetchCompanyInfo(stock.name)} />
-
-                    <Accordion 
-                        title={`Additional Sources [${stock.name}]`}
-                        onToggle={() => fetchCompanyLinks(stock.name)} />
-                {/each}
-            </div>
+            {#each $selectedStocks as stock}
+                {@const report = stockReportData.find(s => s.ticker === stock.ticker)?.report || "No report available"}
+                <ReportContainer {stock} {report}/>
+            {/each}
             <button on:click={backToSelection} class="back-to-selection-btn">
                 Back to Selection
             </button>
@@ -164,3 +76,75 @@ section {
 <footer>
     &copy; This is not real financial advice!
 </footer>
+
+<style>
+    header {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    header img {
+        width: 500px;
+    }
+    
+    section.selection-panel {
+      display: flex;
+      justify-content: center; /* Center the content horizontally */
+      align-items: center; /* Center the content vertically */
+    }
+    
+    div.user-input {
+      margin-right: 20px; /* Add space between the two divs */
+    }
+    
+    .user-input {
+      display: flex;
+      flex-direction: column;
+      padding: 1em;
+      width: 300px;
+    }
+    
+    /* footer */
+    footer {
+        font-size: 14px;
+        text-align: center;
+    }
+    
+    
+    /* Only for Help in Designing */
+    div {
+        border: black dashed;
+    }
+    
+    section {
+        border: black dashed;
+    }
+
+    .generate-report-btn {
+        width: 70%;
+        padding: 1em 1.5em;
+        cursor: pointer;
+        border: 2px solid #000000;
+        background-color: #46ff90;
+        text-transform: uppercase;
+        font-weight: 500;
+        letter-spacing: .09em;
+        font-size: 105%;
+    }
+
+
+.selection-panel, .output-panel {
+    line-height: 1.4em;
+    margin: 1.5em 2em;
+   
+}
+
+.loading-panel {
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+}
+
+</style>

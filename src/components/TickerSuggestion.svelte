@@ -3,6 +3,7 @@
     import { userInputStore } from '../userInputStore';
     
     export let stock;
+    export let clearSuggestions;
 
     let userInputValue;
     $: userInputValue = $userInputStore; // Reaktiv abonnieren
@@ -15,6 +16,7 @@
             }
             return currentStocks;
         })
+        clearSuggestions();
     }
 
 

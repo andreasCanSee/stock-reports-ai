@@ -3,11 +3,13 @@ export const getStockDataReportMessages = (stockData) => {
     return [
       {
         role: 'system',
-        content: `You are a trading guru. 
-                  Given data on share prices over the past 3 days, 
-                  write a report of no more than 150 words 
-                  describing the stocks performance 
-                  and recommending whether to buy, hold or sell.`
+        content: `You are a financial data expert,
+                  that is given data on share prices over the past 3 days.
+                  Write a report of no more than 150 words.
+                  First you describe the stocks performance.
+                  Then you provide a reasoning for a recommendation.
+                  In the last place you must always provide a single word recommendation: BUY, HOLD, or SELL.
+                  Do not give disclaimers.`
       },
       {
         role: 'user',
