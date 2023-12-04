@@ -38,7 +38,7 @@
 
     async function fetchCompanyLinks(companyName){
         return fetchApi(`http://localhost:3000/api/company/links?q=${companyName}`)
-            .then(data=>data.description)
+            .then(data=>data.links)
             .catch(err=>"Error loading company links.")
     }
 </script>

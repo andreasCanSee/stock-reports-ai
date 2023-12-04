@@ -1,32 +1,32 @@
 <script>
-import TickerInput from '../components/TickerInput.svelte';
-import TickerDisplay from '../components/TickerDisplay.svelte';
-import ReportContainer from '../components/ReportContainer.svelte';
-import { fetchApi } from '../lib/api.js';
-import { dates } from '../lib/dateHelpers';
-import { selectedStocks } from '../stockStore';
+    import TickerInput from '../components/TickerInput.svelte';
+    import TickerDisplay from '../components/TickerDisplay.svelte';
+    import ReportContainer from '../components/ReportContainer.svelte';
+    import { fetchApi } from '../lib/api.js';
+    import { dates } from '../lib/dateHelpers';
+    import { selectedStocks } from '../stockStore';
 
-let currentPanel = 'selection';
-let stockReportData = null;
+    let currentPanel = 'selection';
+    let stockReportData = null;
 
-async function generateReports(){
-    currentPanel = 'loading'
-    try{
-        const stockDataPromises = $selectedStocks.map(stock => 
-            fetchApi(`http://localhost:3000/api/stock-data/generate-report?ticker=${stock.ticker}&from=${dates.startDate}&to=${dates.endDate}`)
-        );
-        stockReportData = await Promise.all(stockDataPromises);
-        currentPanel = 'output';
-    } catch(error){
-        console.error('Error fetching stock data:', error);
-        currentPanel = 'selection';
+    async function generateReports(){
+        currentPanel = 'loading';
+        try{
+            const stockDataPromises = $selectedStocks.map(stock => 
+                fetchApi(`http://localhost:3000/api/stock-data/generate-report?ticker=${stock.ticker}&from=${dates.startDate}&to=${dates.endDate}`)
+            );
+            stockReportData = await Promise.all(stockDataPromises);
+            currentPanel = 'output';
+        } catch(error){
+            console.error('Error fetching stock data:', error);
+            currentPanel = 'selection';
+        }
     }
-}
 
-function backToSelection(){
-    currentPanel = 'selection';
-    stockReportData = null;
-}
+    function backToSelection(){
+        currentPanel = 'selection';
+        stockReportData = null;
+    }
 </script>
 
 <header>
@@ -129,18 +129,17 @@ function backToSelection(){
         letter-spacing: .09em;
         font-size: 105%;
     }
+    
+    .selection-panel, .output-panel {
+        line-height: 1.4em;
+        margin: 1.5em 2em;
+    
+    }
 
-
-.selection-panel, .output-panel {
-    line-height: 1.4em;
-    margin: 1.5em 2em;
-   
-}
-
-.loading-panel {
-    flex-direction: column;
-    justify-content: space-around;
-    text-align: center;
-}
+    .loading-panel {
+        flex-direction: column;
+        justify-content: space-around;
+        text-align: center;
+    }
 
 </style>

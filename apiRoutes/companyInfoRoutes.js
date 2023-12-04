@@ -15,11 +15,11 @@ router.get('/info', async (req, res) => {
         const companyInfoMessages = getCompanyInfoMessages(companyName);
         const companyInfoResponse = await fetchOpenAIResponse(companyInfoMessages);
         res.json({ 
-        status: "success",
-        data: {
-            companyName: companyName,
-            description: companyInfoResponse
-        }
+          status: "success",
+          data: {
+              companyName: companyName,
+              description: companyInfoResponse
+            }
         });
     } catch (err) {
         console.error('Error fetching company info:', err);

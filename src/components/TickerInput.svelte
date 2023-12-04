@@ -29,14 +29,13 @@
   }
 </script>
 
-
 <input type="text" id="ticker-input" placeholder="Enter ticker" autocomplete="off" bind:value={$userInputStore}  on:input={handleInput}/>
 <div class="ticker-suggestions">
     {#if suggestedStocks.length > 0}
-        {#each suggestedStocks as stock (stock.ticker)}
+      {#each suggestedStocks as stock (stock.ticker)}
         <TickerSuggestion {stock} clearSuggestions={clearSuggestions}/>
-        {/each}
+      {/each}
     {:else}
       <p>No suggestions available</p>
     {/if}
-  </div>
+</div>

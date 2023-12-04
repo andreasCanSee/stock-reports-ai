@@ -1,15 +1,19 @@
 <script>
+    import { selectedStocks } from '../stockStore.js';
+    export let ticker;
 
-import { selectedStocks } from '../stockStore.js';
-export let ticker;
-
-function removeTicker(){
-    selectedStocks.update(stocks => stocks.filter(s => s.ticker !== ticker));
-}
+    function removeTicker(){
+        selectedStocks.update(stocks => stocks.filter(s => s.ticker !== ticker));
+    }
 </script>
 
+<div class="ticker-box">
+    <span class="ticker-text">{ticker}</span>
+    <button class="remove-icon" on:click={removeTicker}>x</button>
+</div>
+
 <style>
-.ticker-box {
+    .ticker-box {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -19,7 +23,7 @@ function removeTicker(){
         margin-bottom: 10px;
         background-color: #f2f2f2;
     }
-
+    
     .remove-icon {
         display: flex;
         align-items: center;
@@ -29,17 +33,12 @@ function removeTicker(){
         padding: 0 10px;
         height: 20px;
     }
-
-.ticker-text{
-    flex-grow: 1; 
-    display: flex;
-    align-items: center;
-    justify-content: center; 
-
-}
+    
+    .ticker-text{
+        flex-grow: 1; 
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+    
+    }
 </style>
-
-<div class="ticker-box">
-    <span class="ticker-text">{ticker}</span>
-    <button class="remove-icon" on:click={removeTicker}>x</button>
-</div>

@@ -6,7 +6,7 @@
     export let clearSuggestions;
 
     let userInputValue;
-    $: userInputValue = $userInputStore; // Reaktiv abonnieren
+    $: userInputValue = $userInputStore; 
 
     function addStock(){
         selectedStocks.update(currentStocks => {
@@ -18,11 +18,17 @@
         })
         clearSuggestions();
     }
-
-
 </script>
 
-<style>
+  <div class="ticker-suggestion">
+    <span>
+      <strong>{stock.ticker.substring(0, userInputValue.length)}</strong>{stock.ticker.substring(userInputValue.length)} 
+      - <em>{stock.name}</em>
+    </span>
+    <button class="add-ticker-suggestion-btn" on:click={addStock}>ADD</button>
+  </div>
+
+  <style>
     .ticker-suggestion {
         display: flex; /* Use flexbox to arrange items horizontally */
         justify-content: space-between; /* Push items to both ends of the div */
@@ -36,13 +42,3 @@
     margin-left: 10px; /* Add space between text and button */
   }
 </style>
-  
-  <div class="ticker-suggestion">
-    <span>
-      <strong>{stock.ticker.substring(0, userInputValue.length)}</strong>{stock.ticker.substring(userInputValue.length)} 
-      - <em>{stock.name}</em>
-    </span>
-    <button class="add-ticker-suggestion-btn" on:click={addStock}>ADD</button>
-  </div>
-
-
