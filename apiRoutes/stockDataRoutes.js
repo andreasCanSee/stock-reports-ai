@@ -3,14 +3,7 @@ import { fetchStockData } from '../api/stockDataApi.js'
 import { fetchOpenAIResponse } from '../api/openAIHelper.js'
 import { getStockDataReportMessages } from '../api/openaiMessages.js'
 import { addReportToCache, getReportFromCache, clearOldCacheEntries } from '../api/cacheManager.js';
-
-const calculateDaysBetweenDates = (fromDate, toDate) => {
-  const from = new Date(fromDate);
-  const to = new Date(toDate);
-  const differenceInTime = to.getTime() - from.getTime();
-  const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-  return differenceInDays;
-};
+import { getReportDates } from '../api/dateHelpers.js';
 
 const router = express.Router();
 
@@ -34,14 +27,15 @@ router.get('/ticker-search', (req, res) => {
 
 // Endpoint that serves as a proxy
 router.get('/generate-report', async (req, res) => {
-    const { ticker, from, to } = req.query; // extract parameters from URL
+    const { ticker, days } = req.query; // extract parameters from URL
   
+    // Clear old cache entries
     clearOldCacheEntries();  // -> node-cron
   
     try{
-      
+      const { startDate, endDate } = getReportDates(days);
+
       // Check cache
-      const days = calculateDaysBetweenDates(from, to);
       const cachedReport = getReportFromCache(ticker, days);
 
       if (cachedReport) {
@@ -54,8 +48,7 @@ router.get('/generate-report', async (req, res) => {
         });
       }
   
-      const stockData = await fetchStockData(ticker, from, to);
-  
+      const stockData = await fetchStockData(ticker, startDate, endDate);
       const stockDataMessages = getStockDataReportMessages(JSON.stringify(stockData));
       const stockReportResponse = await fetchOpenAIResponse(stockDataMessages);
   

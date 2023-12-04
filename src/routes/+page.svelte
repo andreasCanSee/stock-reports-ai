@@ -4,7 +4,6 @@
     import ReportContainer from '../components/ReportContainer.svelte';
     import LoadingAnimation from '../components/LoadingAnimation.svelte';
     import { fetchApi } from '../lib/api.js';
-    import { getReportDates } from '../lib/dateHelpers';
     import { selectedStocks } from '../stockStore';
 
     let currentPanel = 'selection';
@@ -13,10 +12,9 @@
     async function generateReports(){
         currentPanel = 'loading';
         try{
-            const stockDataPromises = $selectedStocks.map(stock => {
-                const dates = getReportDates(stock.days);
-                return fetchApi(`http://localhost:3000/api/stock-data/generate-report?ticker=${stock.ticker}&from=${dates.startDate}&to=${dates.endDate}`);
-            });
+            const stockDataPromises = $selectedStocks.map(stock => 
+               fetchApi(`http://localhost:3000/api/stock-data/generate-report?ticker=${stock.ticker}&days=${stock.days}`)
+            );
             stockReportData = await Promise.all(stockDataPromises);
             currentPanel = 'output';
         } catch(error){
