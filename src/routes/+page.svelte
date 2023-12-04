@@ -2,6 +2,7 @@
 import TickerInput from '../components/TickerInput.svelte';
 import TickerDisplay from '../components/TickerDisplay.svelte';
 import ReportContainer from '../components/ReportContainer.svelte';
+import { fetchApi } from '../lib/api.js';
 import { selectedStocks } from '../stockStore';
 import { dates } from '../lib/dateHelpers';
 
@@ -11,14 +12,10 @@ let stockReportData = null;
 async function generateReports(){
     currentPanel = 'loading'
     try{
-        const stockDataPromises = $selectedStocks.map(async (stock) => {
-            const url = `http://localhost:3000/api/stock-data/generate-report?ticker=${stock.ticker}&from=${dates.startDate}&to=${dates.endDate}`;
-            const response = await fetch(url);
-            const jsonResponse = await response.json();
-            return jsonResponse.data;
-        });
+        const stockDataPromises = $selectedStocks.map(stock => 
+            fetchApi(`http://localhost:3000/api/stock-data/generate-report?ticker=${stock.ticker}&from=${dates.startDate}&to=${dates.endDate}`)
+        );
         stockReportData = await Promise.all(stockDataPromises);
-        // stockReportData = stockReports.map(data => data.report);
         currentPanel = 'output';
     } catch(error){
         console.error('Error fetching stock data:', error);
@@ -49,10 +46,9 @@ function backToSelection(){
                     {#each $selectedStocks as stock}
                         <TickerDisplay ticker={stock.ticker}/>
                     {/each}
-                    <button class="generate-report-btn" type="button" disabled={$selectedStocks.length === 0} on:click={generateReports}>Generate Reports</button>
-                {:else}
                     <p>Your tickers will appear here...</p>
                 {/if}
+                <button class="generate-report-btn" type="button" disabled={$selectedStocks.length === 0} on:click={generateReports}>Generate Reports</button>
             </div>
         </section>
     {:else if currentPanel === 'loading'}

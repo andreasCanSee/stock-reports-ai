@@ -1,5 +1,6 @@
 <script>
     import Accordion from '../components/Accordion.svelte';
+    import { fetchApi } from '../lib/api.js';
 
     export let stock;
     export let report;
@@ -30,33 +31,15 @@
     }
 
     async function fetchCompanyInfo(companyName){
-        try{
-            const response = await fetch(`http://localhost:3000/api/company/info?q=${companyName}`);
-            const jsonResponse = await response.json();
-            if (jsonResponse.status === "success") {
-                    return jsonResponse.data.description;
-                } else {
-                    throw new Error(jsonResponse.message || "Error in fetching company info response");
-                }
-        } catch (err){
-            console.error('Error in fetching company info:', err);
-            return { companyName, description: "Error loading company information." };
-        }
+        return fetchApi(`http://localhost:3000/api/company/info?q=${companyName}`)
+            .then(data=>data.description)
+            .catch(err=>"Error loading company information.")
     }
 
     async function fetchCompanyLinks(companyName){
-        try{
-            const response = await fetch(`http://localhost:3000/api/company/links?q=${companyName}`);
-            const jsonResponse = await response.json();
-            if (jsonResponse.status === "success") {
-                    return jsonResponse.data.links;
-                } else {
-                    throw new Error(jsonResponse.message || "Error in fetching company links response");
-                }
-        } catch (err){
-            console.error('Error in fetching company links:', err);
-            return { companyName, description: "Error loading company links." };
-        }
+        return fetchApi(`http://localhost:3000/api/company/links?q=${companyName}`)
+            .then(data=>data.description)
+            .catch(err=>"Error loading company links.")
     }
 </script>
 
