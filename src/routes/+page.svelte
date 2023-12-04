@@ -3,8 +3,8 @@ import TickerInput from '../components/TickerInput.svelte';
 import TickerDisplay from '../components/TickerDisplay.svelte';
 import ReportContainer from '../components/ReportContainer.svelte';
 import { fetchApi } from '../lib/api.js';
-import { selectedStocks } from '../stockStore';
 import { dates } from '../lib/dateHelpers';
+import { selectedStocks } from '../stockStore';
 
 let currentPanel = 'selection';
 let stockReportData = null;
