@@ -1,6 +1,25 @@
 <script>
     import { selectedStocks } from '../stockStore.js';
     export let ticker;
+    
+    let selectedDays;
+    const dayOptions = [1, 2, 3, 4, 5];
+
+    // Initialize selectedDays with the current value from the store
+    selectedStocks.subscribe(stocks => {
+        const stock = stocks.find(s => s.ticker === ticker);
+        if (stock) {
+            selectedDays = stock.days;
+        }
+    });
+
+    function updateDays(){
+        selectedStocks.update(stocks =>
+            stocks.map(s =>
+                s.ticker === ticker ? {...s, days: selectedDays } : s
+            )
+        );
+    }
 
     function removeTicker(){
         selectedStocks.update(stocks => stocks.filter(s => s.ticker !== ticker));
@@ -9,6 +28,11 @@
 
 <div class="ticker-box">
     <span class="ticker-text">{ticker}</span>
+    <select class="day-selector" bind:value={selectedDays} on:change={updateDays}>
+        {#each dayOptions as day}
+            <option value={day} selected={day === selectedDays}>{day} Day{day === 1 ? '' : 's'}</option>
+    {/each}
+    </select>
     <button class="remove-icon" on:click={removeTicker}>x</button>
 </div>
 

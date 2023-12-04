@@ -11,8 +11,9 @@
     function addStock(){
         selectedStocks.update(currentStocks => {
             if (currentStocks.length < 5 && !currentStocks.some(s => s.ticker === stock.ticker)){
-              userInputStore.set("");
-              return [...currentStocks, stock];
+              const stockWithDays = { ...stock, days: 3 };
+              userInputStore.set(""); 
+              return [...currentStocks, stockWithDays];
             }
             return currentStocks;
         })

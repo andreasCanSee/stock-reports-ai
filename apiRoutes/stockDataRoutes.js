@@ -4,6 +4,14 @@ import { fetchOpenAIResponse } from '../api/openAIHelper.js'
 import { getStockDataReportMessages } from '../api/openaiMessages.js'
 import { addReportToCache, getReportFromCache, clearOldCacheEntries } from '../api/cacheManager.js';
 
+const calculateDaysBetweenDates = (fromDate, toDate) => {
+  const from = new Date(fromDate);
+  const to = new Date(toDate);
+  const differenceInTime = to.getTime() - from.getTime();
+  const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+  return differenceInDays;
+};
+
 const router = express.Router();
 
 // API endpoint for ticker search
@@ -33,7 +41,9 @@ router.get('/generate-report', async (req, res) => {
     try{
       
       // Check cache
-      const cachedReport = getReportFromCache(ticker);
+      const days = calculateDaysBetweenDates(from, to);
+      const cachedReport = getReportFromCache(ticker, days);
+
       if (cachedReport) {
         return res.json({ 
           status: "success",
@@ -50,7 +60,7 @@ router.get('/generate-report', async (req, res) => {
       const stockReportResponse = await fetchOpenAIResponse(stockDataMessages);
   
       // Store in cache
-      addReportToCache(ticker, stockReportResponse);
+      addReportToCache(ticker, days, stockReportResponse);
   
       res.json({ 
         status: "success",

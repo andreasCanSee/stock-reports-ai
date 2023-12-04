@@ -4,7 +4,7 @@ export const getStockDataReportMessages = (stockData) => {
       {
         role: 'system',
         content: `You are a financial data expert,
-                  that is given data on share prices over the past 3 days.
+                  that is given data on share prices over the past given days.
                   Write a report of no more than 150 words.
                   First you describe the stocks performance.
                   Then you provide a reasoning for a recommendation.
