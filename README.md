@@ -74,8 +74,12 @@ The most significant enhancement in **Stock Reports AI** is the division into a 
 - **Enhanced Security**: By separating the Backend, sensitive information like API keys can be securely stored in environment variables (`.env` file). This prevents exposure of critical credentials in the Frontend code, enhancing the overall security of the application.
 
 ### Technology Stack
-- Frontend: Developed using [Svelte](https://svelte.dev/), chosen to facilitate learning this technology.
-- Backend: Built with [Express.js](https://expressjs.com/), the Backend serves as a proxy to various external APIs. 
+**Frontend**: 
+- Developed using [Svelte](https://svelte.dev/), chosen to facilitate learning this technology.
+- For styling, [Tailwind CSS](https://tailwindcss.com/) is integrated to provide a utility-first CSS framework that enables rapid and responsive design.
+
+**Backend**: 
+- Built with [Express.js](https://expressjs.com/), the Backend serves as a proxy to various external APIs. 
 
 ### Project Structure
 
@@ -112,9 +116,3 @@ The most significant enhancement in **Stock Reports AI** is the division into a 
 - **Data Caching**: To save on API calls, reports and company information are cached. Reports are cached in `/api/cacheManager.js`, and company information in `/data/CompanyInfoCache`.
 
 ## To Be Continued...
-
-### Starting the project
-
-- den Server kannst du dann via `node --env-file .env server.js` starten
-    - ab Node.js 20.6.0 ist `dotenv` nicht mehr nötig, um Umgebungsvariablen zu verwalten
-        - https://dev.to/cjreads665/nodejs-2060-say-goodbye-to-dotenv-2ijl
