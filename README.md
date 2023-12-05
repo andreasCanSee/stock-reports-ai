@@ -67,7 +67,11 @@ The functionality was straightforward:
 
 ## Project Extensions 
 
-The most significant enhancement in Stock Reports AI is the division into a Frontend and Backend architecture. This change was implemented to better manage the application's functionality and to streamline the process of querying various external APIs.
+The most significant enhancement in **Stock Reports AI** is the division into a Frontend and Backend architecture. This structural change was implemented for several reasons:
+
+- **Improved Management of Application Functionality**: It allows for more efficient handling of different functionalities of the application, making the system more modular and maintainable.
+- **Streamlined Querying Process**: The Backend acts as a centralized point for querying various external APIs, streamlining the data retrieval process.
+- **Enhanced Security**: By separating the Backend, sensitive information like API keys can be securely stored in environment variables (`.env` file). This prevents exposure of critical credentials in the Frontend code, enhancing the overall security of the application.
 
 ### Technology Stack
 - Frontend: Developed using [Svelte](https://svelte.dev/), chosen to facilitate learning this technology.
