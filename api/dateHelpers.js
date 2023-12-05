@@ -27,7 +27,7 @@ function getDateNDaysAgo(days) {
 
 export function getReportDates(days) {
     return {
-        startDate: getDateNDaysAgo(days), // Last 3 business days
+        startDate: getDateNDaysAgo(days), // Last n business days
         endDate: getDateNDaysAgo(1) // Yesterday, assuming it's not a weekend
     };
 }

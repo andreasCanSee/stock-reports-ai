@@ -6,6 +6,8 @@
     import { fetchApi } from '../lib/api.js';
     import { selectedStocks } from '../stockStore';
 
+    import './tailwind.css';
+
     let currentPanel = 'selection';
     let stockReportData = null;
 
@@ -33,27 +35,31 @@
     <img src="skyline-data.png" alt="Stock Data Reports">
 </header>
 
-<main>
+<main class="mx-auto p-4 max-w-4xl">
     {#if currentPanel === 'selection'}
-        <section class="selection-panel">
-            <div class="user-input">
-                <label for="ticker-input">Add up to 5 stock tickers below:</label>
+        <section class="selection-panel flex flex-col md:flex-row">
+            <div class="user-input flex flex-col w-full md:w-1/2 px-2">
+                <label for="ticker-input" class="mb-2">Add up to 5 stock tickers below:</label>
                 <TickerInput />
             </div>
-            <div class="user-display">
+            <div class="user-display flex flex-col w-full md:w-1/2 px-2">
                 <p>Your Selection:</p>
                 {#if $selectedStocks.length > 0}
                     {#each $selectedStocks as stock}
                         <TickerDisplay ticker={stock.ticker}/>
                     {/each}
+                {:else}
                     <p>Your tickers will appear here...</p>
                 {/if}
-                <button class="generate-report-btn" type="button" disabled={$selectedStocks.length === 0} on:click={generateReports}>Generate Reports</button>
+
+                <button class="generate-report-btn bg-blue-900 text-white uppercase py-4 px-4 rounded-none hover:bg-blue-800" type="button" disabled={$selectedStocks.length === 0} on:click={generateReports}>
+                    Generate Reports
+                </button>
             </div>
         </section>
     {:else if currentPanel === 'loading'}
-        <section class="loading-panel">
-            <img src="loader.svg" alt="loading">
+        <section class="loading-panel flex flex-col justify-center items-center h-full">
+            <img class="mb-4" src="loader.svg" alt="loading">
             <LoadingAnimation/>
         </section>
     {:else if currentPanel === 'output'}
@@ -62,9 +68,11 @@
                 {@const report = stockReportData.find(s => s.ticker === stock.ticker)?.report || "No report available"}
                 <ReportContainer {stock} {report}/>
             {/each}
-            <button on:click={backToSelection} class="back-to-selection-btn">
-                Back to Selection
-            </button>
+            <div class="flex justify-center">
+                <button class="bg-gray-500 text-white uppercase py-4 px-4 rounded-none hover:bg-gray-700" on:click={backToSelection}>
+                    Back to Selection
+                </button>
+            </div>
         </section>
     {/if}
 </main>
@@ -77,69 +85,21 @@
     header {
         display: flex;
         justify-content: center;
-        width: 100%;
         margin: 0 auto;
     }
     
     header img {
         width: 500px;
     }
-    
-    section.selection-panel {
-      display: flex;
-      justify-content: center; /* Center the content horizontally */
-      align-items: center; /* Center the content vertically */
-    }
-    
-    div.user-input {
-      margin-right: 20px; /* Add space between the two divs */
-    }
-    
-    .user-input {
-      display: flex;
-      flex-direction: column;
-      padding: 1em;
-      width: 300px;
-    }
-    
-    /* footer */
+
     footer {
         font-size: 14px;
         text-align: center;
     }
     
-    
     /* Only for Help in Designing */
-    div {
+    div, main, section {
         border: black dashed;
-    }
-    
-    section {
-        border: black dashed;
-    }
-
-    .generate-report-btn {
-        width: 70%;
-        padding: 1em 1.5em;
-        cursor: pointer;
-        border: 2px solid #000000;
-        background-color: #46ff90;
-        text-transform: uppercase;
-        font-weight: 500;
-        letter-spacing: .09em;
-        font-size: 105%;
-    }
-
-    .selection-panel, .output-panel {
-        line-height: 1.4em;
-        margin: 1.5em 2em;
-    
-    }
-
-    .loading-panel {
-        flex-direction: column;
-        justify-content: space-around;
-        text-align: center;
     }
 
 </style>

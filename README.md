@@ -112,3 +112,9 @@ The most significant enhancement in **Stock Reports AI** is the division into a 
 - **Data Caching**: To save on API calls, reports and company information are cached. Reports are cached in `/api/cacheManager.js`, and company information in `/data/CompanyInfoCache`.
 
 ## To Be Continued...
+
+### Starting the project
+
+- den Server kannst du dann via `node --env-file .env server.js` starten
+    - ab Node.js 20.6.0 ist `dotenv` nicht mehr nötig, um Umgebungsvariablen zu verwalten
+        - https://dev.to/cjreads665/nodejs-2060-say-goodbye-to-dotenv-2ijl
