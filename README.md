@@ -77,6 +77,24 @@ The most significant enhancement in **Stock Reports AI** is the division into a 
 - Frontend: Developed using [Svelte](https://svelte.dev/), chosen to facilitate learning this technology.
 - Backend: Built with [Express.js](https://expressjs.com/), the Backend serves as a proxy to various external APIs. 
 
+### Project Structure
+
+**Stock Reports AI** is structured into distinct Frontend and Backend components, each with its dedicated files and directories, ensuring a clear separation of concerns.
+
+- **Backend Components**:
+  - `/api`: Contains the main logic for API interactions.
+  - `/apiRoutes`: Manages the routing for API endpoints.
+  - `/data`: Stores data files and scripts for data management.
+  - `server.js`: The main server file for the Backend.
+  - `.env`: A configuration file for storing environment variables and API keys securely.
+
+- **Frontend Components**:
+  - `/src`: The source directory for Svelte components and logic.
+  - `/static`: Houses static files like images and global styles.
+  - `package.json`: Manages project dependencies and scripts.
+  - `svelte.config.js`: Configuration file for Svelte.
+  - `vite.config.js`: Configuration file for Vite, which is used for building the Frontend.
+
 #### Frontend Details
 - **Enhanced Ticker Input**: The text input field now suggests stock tickers based on user input, using data from the Polygon API. This ensures users can only select existing tickers, improving input control and user experience.
 - **Ticker Selection Limit**: The number of tickers a user can select for reports is limited to five to manage API call frequency. Duplicate ticker entries are prevented.
