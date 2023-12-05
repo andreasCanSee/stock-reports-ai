@@ -1,6 +1,8 @@
 import express from "express";
 import { fetchOpenAIResponse } from '../api/openAIHelper.js'
 import { getCompanyInfoMessages, getCompanyLinksInfoMessages } from '../api/openaiMessages.js'
+import {  saveCompanyInfoToCache, getCompanyInfoFromCache } from '../api/cacheManager.js'
+
 
 const router = express.Router();
 
@@ -12,14 +14,26 @@ router.get('/info', async (req, res) => {
     }
 
     try {
-        const companyInfoMessages = getCompanyInfoMessages(companyName);
-        const companyInfoResponse = await fetchOpenAIResponse(companyInfoMessages);
-        res.json({ 
-          status: "success",
-          data: {
-              companyName: companyName,
-              description: companyInfoResponse
-            }
+      
+      const cachedData = getCompanyInfoFromCache(companyName);
+      if (cachedData) {
+        return res.json({ status: "success", data: {
+          companyName: companyName,
+          description: cachedData
+        } });
+      }
+      
+      const companyInfoMessages = getCompanyInfoMessages(companyName);
+      const companyInfoResponse = await fetchOpenAIResponse(companyInfoMessages);
+      
+      saveCompanyInfoToCache(companyName, companyInfoResponse);
+      
+      res.json({ 
+        status: "success",
+        data: {
+            companyName: companyName,
+            description: companyInfoResponse
+          }
         });
     } catch (err) {
         console.error('Error fetching company info:', err);

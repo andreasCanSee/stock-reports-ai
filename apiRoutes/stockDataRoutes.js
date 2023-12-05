@@ -2,7 +2,7 @@ import express from "express";
 import { fetchStockData } from '../api/stockDataApi.js'
 import { fetchOpenAIResponse } from '../api/openAIHelper.js'
 import { getStockDataReportMessages } from '../api/openaiMessages.js'
-import { addReportToCache, getReportFromCache, clearOldCacheEntries } from '../api/cacheManager.js';
+import { addReportToCache, getReportFromCache, clearOldReportCacheEntries } from '../api/cacheManager.js';
 import { getReportDates } from '../api/dateHelpers.js';
 
 const router = express.Router();
@@ -30,7 +30,7 @@ router.get('/generate-report', async (req, res) => {
     const { ticker, days } = req.query; // extract parameters from URL
   
     // Clear old cache entries
-    clearOldCacheEntries();  // -> node-cron
+    clearOldReportCacheEntries();  // -> node-cron
   
     try{
       const { startDate, endDate } = getReportDates(days);
