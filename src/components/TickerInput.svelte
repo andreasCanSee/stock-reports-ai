@@ -1,6 +1,7 @@
 <script>
   import TickerSuggestion from './TickerSuggestion.svelte';
   import { userInputStore } from '../userInputStore';
+  import { debounce } from '../lib/debounce';
 
   $: userInput = $userInputStore; // Reaktive Zuweisung
   let suggestedStocks = [] // List of stocks
@@ -13,6 +14,8 @@
       message = text;
       messageType = type;
   }
+
+  const debouncedHandleMessage = debounce(handleMessage, 500);
   
   async function handleInput() {
 
@@ -46,7 +49,7 @@
   {/if}
   {#if suggestedStocks.length > 0}
       {#each suggestedStocks as stock (stock.ticker)}
-          <TickerSuggestion {stock} on:message={handleMessage} clearSuggestions={clearSuggestions}/>
+          <TickerSuggestion {stock} on:message={debouncedHandleMessage}  clearSuggestions={clearSuggestions}/>
       {/each}
   {/if}
 </div>
