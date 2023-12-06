@@ -1,45 +1,51 @@
 <script>
     import { selectedStocks } from '../stockStore'
     import { userInputStore } from '../userInputStore';
-    
+    import { createEventDispatcher } from 'svelte';
+
     export let stock;
     export let clearSuggestions;
+
+    let message = '';
+    let type = '';
+
+    const dispatch = createEventDispatcher();
 
     let userInputValue;
     $: userInputValue = $userInputStore; 
 
     function addStock(){
+        let added = false;
         selectedStocks.update(currentStocks => {
-            if (currentStocks.length < 5 && !currentStocks.some(s => s.ticker === stock.ticker)){
-              const stockWithDays = { ...stock, days: 3 };
-              userInputStore.set(""); 
-              return [...currentStocks, stockWithDays];
-            }
+          if (currentStocks.some(s => s.ticker === stock.ticker)) {
+            message = 'You have already selected this ticker';
+            type = 'error';
+            clearSuggestions();
             return currentStocks;
-        })
-        clearSuggestions();
+          }
+          else if (currentStocks.length >= 5) {
+            message = 'You cannot select more than 5 tickers. Please remove one to add this ticker';
+            type = 'error';
+            return currentStocks; 
+          }else {
+            const stockWithDays = { ...stock, days: 3 };
+            userInputStore.set(""); 
+            message = 'Ticker successfully added to your selection';
+            type = 'success';
+            clearSuggestions();
+            return [...currentStocks, stockWithDays];
+          }
+        });
+        dispatch('message', { text: message, type: type });
     }
 </script>
 
-  <div class="ticker-suggestion">
+  <div class="ticker-suggestion flex justify-between items-center mt-1 pl-3 pr-3 py-3 border-black rounded-lg bg-gray-200 hover:bg-black hover:text-white">
     <span>
-      <strong>{stock.ticker.substring(0, userInputValue.length)}</strong>{stock.ticker.substring(userInputValue.length)} 
+      <span class="bg-black text-white">{stock.ticker.substring(0, userInputValue.length)}</span>{stock.ticker.substring(userInputValue.length)} 
       - <em>{stock.name}</em>
     </span>
-    <button class="add-ticker-suggestion-btn" on:click={addStock}>ADD</button>
+    <button class="add-ticker-suggestion-btn bg-white text-black rounded-lg text-lg font-bold ml-2 py-1 px-3" on:click={addStock}>+</button>
   </div>
 
-  <style>
-    .ticker-suggestion {
-        display: flex; /* Use flexbox to arrange items horizontally */
-        justify-content: space-between; /* Push items to both ends of the div */
-        align-items: center; /* Vertically align items in the center */
-        background-color: white; /* Hintergrundfarbe für die Sichtbarkeit */
-        margin-top: 10px; /* Add more space between suggestions */
-        width: 300px; /* Set a fixed width for each suggestion */
-    }
-    /* Style the ADD button */
-  .add-ticker-suggestion-btn {
-    margin-left: 10px; /* Add space between text and button */
-  }
-</style>
+  

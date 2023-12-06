@@ -31,75 +31,68 @@
     }
 </script>
 
-<header>
-    <img src="skyline-data.png" alt="Stock Data Reports">
+<header class="flex justify-center items-center">
+    <img src="skyline-data.png" alt="Stock Data Reports" class="w-500">
 </header>
 
 <main class="mx-auto p-4 max-w-4xl">
     {#if currentPanel === 'selection'}
-        <section class="selection-panel flex flex-col md:flex-row">
-            <div class="user-input flex flex-col w-full md:w-1/2 px-2">
-                <label for="ticker-input" class="mb-2">Add up to 5 stock tickers below:</label>
+        <section class="flex flex-col md:flex-row">
+            <div class="user-input flex flex-col w-full md:w-1/2 px-2 md:mr-24">
+                <label for="ticker-input" class="text-xl mb-2">Add up to 5 stock tickers below for generating reports:</label>
                 <TickerInput />
             </div>
             <div class="user-display flex flex-col w-full md:w-1/2 px-2">
-                <p>Your Selection:</p>
+                <p class="text-xl">Your Selection:</p>
+                <div class="ticker-display-container flex flex-col items-center mt-2">
                 {#if $selectedStocks.length > 0}
                     {#each $selectedStocks as stock}
                         <TickerDisplay ticker={stock.ticker}/>
                     {/each}
                 {:else}
-                    <p>Your tickers will appear here...</p>
+                    <div class="ticker-box flex flex-col md:flex-row justify-between items-center bg-black text-white py-3 mt-1 pl-3 pr-3 w-2/3">
+                        Your selected tickers will appear here...
+                    </div>
                 {/if}
+                </div>
 
-                <button class="generate-report-btn bg-blue-900 text-white uppercase py-4 px-4 rounded-none hover:bg-blue-800" type="button" disabled={$selectedStocks.length === 0} on:click={generateReports}>
-                    Generate Reports
+                <button on:click={generateReports} disabled={$selectedStocks.length === 0} class="bg-blue-900 text-white uppercase py-4 px-4 mt-2 rounded-lg hover:bg-blue-800 transition-colors duration-300 ease-in-out cursor-pointer disabled:bg-blue-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled: shadow-xl">
+                    Generate Report{$selectedStocks.length === 1 ? '' : 's' }
                 </button>
             </div>
         </section>
     {:else if currentPanel === 'loading'}
-        <section class="loading-panel flex flex-col justify-center items-center h-full">
+        <section class="flex flex-col justify-center items-center h-full">
             <img class="mb-4" src="loader.svg" alt="loading">
             <LoadingAnimation/>
         </section>
     {:else if currentPanel === 'output'}
-        <section class="output-panel">
+        <section class="">
             {#each $selectedStocks as stock}
                 {@const report = stockReportData.find(s => s.ticker === stock.ticker)?.report || "No report available"}
                 <ReportContainer {stock} {report}/>
             {/each}
             <div class="flex justify-center">
-                <button class="bg-gray-500 text-white uppercase py-4 px-4 rounded-none hover:bg-gray-700" on:click={backToSelection}>
+                <button class="bg-gray-500 text-white uppercase py-4 px-4 rounded-none hover:bg-gray-700 cursor-pointer" on:click={backToSelection}>
                     Back to Selection
                 </button>
             </div>
         </section>
     {/if}
+    <div class="border-t border-gray-800 mt-10"></div>
 </main>
 
-<footer>
-    &copy; This is not real financial advice!
+<footer class="text-center">
+    <p class="text-sm">&copy; This is not real financial advice!</p>
 </footer>
 
 <style>
-    header {
-        display: flex;
-        justify-content: center;
-        margin: 0 auto;
-    }
-    
-    header img {
-        width: 500px;
-    }
 
-    footer {
-        font-size: 14px;
-        text-align: center;
-    }
+
     
-    /* Only for Help in Designing */
+    /* Only for Help in Designing 
     div, main, section {
         border: black dashed;
-    }
-
+    }*/
+    
 </style>

@@ -17,4 +17,4 @@
     });
 </script>
 
-<p>Querying API{dots}</p>
+<p class="text-xl">Querying API{dots}</p>

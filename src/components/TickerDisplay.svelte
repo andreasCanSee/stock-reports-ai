@@ -26,43 +26,12 @@
     }
 </script>
 
-<div class="ticker-box">
-    <span class="ticker-text">{ticker}</span>
-    <select class="day-selector" bind:value={selectedDays} on:change={updateDays}>
+<div class="ticker-box flex justify-between items-center bg-black text-white py-3 mt-1 pl-3 pr-3 w-2/3">
+    <span class="ticker-text flex-auto truncate">{ticker}</span>
+    <select class="day-selector text-black bg-white rounded-lg py-1 pl-1 w-1/3" title="Select Number of Days for Data Retrieval" bind:value={selectedDays} on:change={updateDays}>
         {#each dayOptions as day}
-            <option value={day} selected={day === selectedDays}>{day} Day{day === 1 ? '' : 's'}</option>
+            <option class="bg-white" value={day} selected={day === selectedDays}>{day} Day{day === 1 ? '' : 's'}</option>
     {/each}
     </select>
-    <button class="remove-icon" on:click={removeTicker}>x</button>
+    <button class="remove-icon bg-gray-200 text-black rounded-lg text-lg font-bold ml-2 py-1 px-3 ml-4" on:click={removeTicker}>x</button>
 </div>
-
-<style>
-    .ticker-box {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px;
-        border: 1px solid #333;
-        border-radius: 4px;
-        margin-bottom: 10px;
-        background-color: #f2f2f2;
-    }
-    
-    .remove-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: red;
-        padding: 0 10px;
-        height: 20px;
-    }
-    
-    .ticker-text{
-        flex-grow: 1; 
-        display: flex;
-        align-items: center;
-        justify-content: center; 
-    
-    }
-</style>
