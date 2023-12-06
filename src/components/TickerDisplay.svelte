@@ -26,7 +26,7 @@
     }
 </script>
 
-<div class="ticker-box flex justify-between items-center bg-black text-white py-3 mt-1 pl-3 pr-3 w-2/3">
+<div class="ticker-box flex justify-between items-center bg-gray-700 text-white py-3 mt-2 pl-3 pr-3 w-2/3">
     <span class="ticker-text flex-auto truncate">{ticker}</span>
     <select class="day-selector text-black bg-white rounded-lg py-1 pl-1 w-1/3" title="Select Number of Days for Data Retrieval" bind:value={selectedDays} on:change={updateDays}>
         {#each dayOptions as day}

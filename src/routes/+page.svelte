@@ -35,22 +35,22 @@
     <img src="skyline-data.png" alt="Stock Data Reports" class="w-500">
 </header>
 
-<main class="mx-auto p-4 max-w-4xl">
+<main class="mx-auto p-4 max-w-4xl mt-8">
     {#if currentPanel === 'selection'}
         <section class="flex flex-col md:flex-row">
             <div class="user-input flex flex-col w-full md:w-1/2 px-2 md:mr-24">
                 <label for="ticker-input" class="text-xl mb-2">Add up to 5 stock tickers below for generating reports:</label>
                 <TickerInput />
             </div>
-            <div class="user-display flex flex-col w-full md:w-1/2 px-2">
-                <p class="text-xl">Your Selection:</p>
-                <div class="ticker-display-container flex flex-col items-center mt-2">
+            <div class="user-display flex flex-col w-full mt-6 md:mt-0 md:w-1/2 px-2">
+                <p class="text-xl">Your selected stock tickers: ({$selectedStocks.length}/5)</p>
+                <div class="ticker-display-container  mt-2">
                 {#if $selectedStocks.length > 0}
                     {#each $selectedStocks as stock}
                         <TickerDisplay ticker={stock.ticker}/>
                     {/each}
                 {:else}
-                    <div class="ticker-box flex flex-col md:flex-row justify-between items-center bg-black text-white py-3 mt-1 pl-3 pr-3 w-2/3">
+                    <div class="ticker-box flex flex-col md:flex-row justify-between items-center bg-gray-700 text-white py-3 mt-1 pl-3 pr-3 w-2/3">
                         Your selected tickers will appear here...
                     </div>
                 {/if}
@@ -67,19 +67,19 @@
             <LoadingAnimation/>
         </section>
     {:else if currentPanel === 'output'}
-        <section class="">
+        <section>
             {#each $selectedStocks as stock}
                 {@const report = stockReportData.find(s => s.ticker === stock.ticker)?.report || "No report available"}
                 <ReportContainer {stock} {report}/>
             {/each}
             <div class="flex justify-center">
-                <button class="bg-gray-500 text-white uppercase py-4 px-4 rounded-none hover:bg-gray-700 cursor-pointer" on:click={backToSelection}>
+                <button class="bg-gray-700 text-white uppercase py-4 px-4 mt-8 rounded-lg w-1/3 hover:bg-gray-500  transition-colors duration-300 ease-in-out  cursor-pointer" on:click={backToSelection}>
                     Back to Selection
                 </button>
             </div>
         </section>
     {/if}
-    <div class="border-t border-gray-800 mt-10"></div>
+    <div class="border-t border-gray-800 mt-8"></div>
 </main>
 
 <footer class="text-center">
@@ -88,8 +88,6 @@
 
 <style>
 
-
-    
     /* Only for Help in Designing 
     div, main, section {
         border: black dashed;

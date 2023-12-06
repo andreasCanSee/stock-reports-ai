@@ -17,17 +17,17 @@
     const isArray = (value) => Array.isArray(value);
 </script>
 
-<div class="accordion-container">
-    <button class="accordion-header" on:click={toggleAccordion}>
-        {title}
+<div class="accordion-container flex flex-col items-center mt-4">
+    <button on:click={toggleAccordion} class="accordeon-header bg-blue-900 text-white uppercase py-4 px-4 mt-2 rounded-lg hover:bg-blue-800 transition-colors duration-300 ease-in-out cursor-pointer">
+        {content === null ? 'Generate' : 'Show'} {title}
     </button>
     {#if isOpen}
-        <div class="accordion-content">
+        <div class="accordion-content bg-white text-justify p-4 w-full">
             {#if content}
                 {#if isArray(content)}
-                    <ul>
+                    <ul class="list-disc list-inside">
                         {#each content as link}
-                            <li>{link.description}: <a href={link.link} target="_blank">{link.link}</a></li>
+                            <li>{link.description}: <a href={link.link} class="font-bold bg-gray-100 break-words" target="_blank">{link.link}</a></li>
                         {/each}
                     </ul>
                 {:else}
@@ -39,35 +39,3 @@
         </div>
     {/if}
 </div>
-
-<style>
-
-    .accordion-header {
-        background-color: #727070;
-        color: #ffffff;
-        cursor: pointer;
-        padding: 18px;
-        width: 100%;
-        text-align: left;
-        border: none;
-        outline: none;
-        transition: 0.4s;
-    }
-    
-    .accordion-header:hover {
-        background-color: #ccc;
-        color: black;
-    }
-    
-    .accordion-content {
-        padding: 18px;
-        overflow: hidden;
-        transition: max-height 0.2s ease-out;
-        background-color: white;
-    }
-    
-    .accordion-container {
-        margin-bottom: 15px;
-    }
-    
-    </style>
