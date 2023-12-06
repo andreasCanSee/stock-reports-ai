@@ -47,7 +47,7 @@
                 <div class="ticker-display-container  mt-2">
                 {#if $selectedStocks.length > 0}
                     {#each $selectedStocks as stock}
-                        <TickerDisplay ticker={stock.ticker}/>
+                        <TickerDisplay ticker={stock.ticker} days={stock.days}/>
                     {/each}
                 {:else}
                     <div class="ticker-box flex flex-col md:flex-row justify-between items-center bg-gray-700 text-white py-3 mt-1 pl-3 pr-3 w-2/3">

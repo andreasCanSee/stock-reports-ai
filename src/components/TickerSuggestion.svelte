@@ -27,16 +27,16 @@
             type = 'error';
             return currentStocks; 
           }else{
-            const stockWithDays = { ...stock, days: 3 };
             userInputStore.set(""); 
             message = 'Ticker successfully added to your selection';
             type = 'success';
             clearSuggestions();
-            return [...currentStocks, stockWithDays]; 
+            const stockWithDays = { ...stock, days: 3 };
+            return [stockWithDays, ...currentStocks, ]; 
           }
         });
-        console.log($selectedStocks)
         dispatch('message', { text: message, type: type });
+        console.log('Nach ADD:', $selectedStocks)
     }
 </script>
 
