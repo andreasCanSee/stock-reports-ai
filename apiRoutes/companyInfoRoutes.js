@@ -1,8 +1,7 @@
 import express from "express";
-import { fetchOpenAIResponse } from '../api/openAIHelper.js'
-import { getCompanyInfoMessages, getCompanyLinksInfoMessages } from '../api/openaiMessages.js'
+import { fetchOpenAIResponse } from '../api/openai/openaiHelper.js'
+import { getCompanyInfoMessages, getCompanyLinksInfoMessages } from '../api/openai/openaiMessages.js'
 import {  saveCompanyInfoToCache, getCompanyInfoFromCache } from '../api/cacheManager.js'
-
 
 const router = express.Router();
 

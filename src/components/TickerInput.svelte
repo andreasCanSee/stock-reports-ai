@@ -8,14 +8,23 @@
 
   let message = '';
   let messageType = '';
+  let messageKey = '';
 
   function handleMessage(event) {
-      const { text, type } = event.detail;
+      const { text, type, key } = event.detail;
       message = text;
       messageType = type;
+      messageKey = key;
   }
 
-  const debouncedHandleMessage = debounce(handleMessage, 500);
+  let isVisible = false;
+
+  $: if (messageKey) {
+      isVisible = true;
+      setTimeout(() => {
+          isVisible = false;
+      }, 3000); 
+  }
   
   async function handleInput() {
 
@@ -37,19 +46,21 @@
     }
   }
 
+  const debouncedHandleInput = debounce(handleInput, 300);
+
   function clearSuggestions(){
      suggestedStocks = [];
   }
 </script>
 
-<input type="text" id="ticker-input" bind:value={$userInputStore} on:input={handleInput} placeholder="Enter ticker, e.g. AAPL" class="text-lg py-3 w-56 pl-3 focus:outline-none rounded-lg" autocomplete="off" maxlength="20"/>
+<input type="text" id="ticker-input" bind:value={$userInputStore} on:input={debouncedHandleInput} placeholder="Enter ticker, e.g. AAPL" class="text-lg py-3 pl-3 focus:outline-none rounded-lg" autocomplete="off" maxlength="20"/>
 <div class="ticker-suggestions">
-  {#if message}
+  {#if isVisible}
       <p class={messageType === 'success' ? 'text-green-700' : 'text-red-700'}>{message}</p>
   {/if}
   {#if suggestedStocks.length > 0}
       {#each suggestedStocks as stock (stock.ticker)}
-          <TickerSuggestion {stock} on:message={debouncedHandleMessage}  clearSuggestions={clearSuggestions}/>
+          <TickerSuggestion {stock} on:message={handleMessage}  clearSuggestions={clearSuggestions}/>
       {/each}
   {/if}
 </div>

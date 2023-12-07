@@ -1,7 +1,7 @@
 import express from "express";
 import { fetchStockData } from '../api/stockDataApi.js'
-import { fetchOpenAIResponse } from '../api/openAIHelper.js'
-import { getStockDataReportMessages } from '../api/openaiMessages.js'
+import { fetchOpenAIResponse } from '../api/openai/openaiHelper.js'
+import { getStockDataReportMessages } from '../api/openai/openaiMessages.js'
 import { addReportToCache, getReportFromCache, clearOldReportCacheEntries } from '../api/cacheManager.js';
 import { getReportDates } from '../api/dateHelpers.js';
 

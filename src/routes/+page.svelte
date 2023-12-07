@@ -38,25 +38,28 @@
 <main class="mx-auto p-4 max-w-4xl mt-8">
     {#if currentPanel === 'selection'}
         <section class="flex flex-col md:flex-row">
-            <div class="user-input flex flex-col w-full md:w-1/2 px-2 md:mr-24">
+            <div class="user-input flex flex-col w-full rounded p-4 md:w-1/2 p-4 md:mr-24 shadow-xl">
                 <label for="ticker-input" class="text-xl mb-2">Add up to 5 stock tickers below for generating reports:</label>
                 <TickerInput />
             </div>
-            <div class="user-display flex flex-col w-full mt-6 md:mt-0 md:w-1/2 px-2">
-                <p class="text-xl">Your selected stock tickers: ({$selectedStocks.length}/5)</p>
-                <div class="ticker-display-container  mt-2">
+            <div class="user-display flex flex-col w-full mt-6 md:mt-0 md:w-1/2 p-4 rounded shadow-xl">
+                <p class="text-xl">Your selected stock tickers: 
+                    <span class={$selectedStocks.length === 5 ? 'font-extrabold underline' : ''}>
+                        ({$selectedStocks.length}/5)
+                    </span>
+                </p>
+                <div class="ticker-display-container mt-2 flex flex-col items-center justify-center">
                 {#if $selectedStocks.length > 0}
                     {#each $selectedStocks as stock}
                         <TickerDisplay ticker={stock.ticker} days={stock.days}/>
                     {/each}
                 {:else}
-                    <div class="ticker-box flex flex-col md:flex-row justify-between items-center bg-gray-700 text-white py-3 mt-1 pl-3 pr-3 w-2/3">
+                    <div class="ticker-box flex flex-col md:flex-row justify-between items-center bg-gray-700 text-white py-3 mt-1 pl-3 pr-3 mb-2 w-2/3">
                         Your selected tickers will appear here...
                     </div>
                 {/if}
                 </div>
-
-                <button on:click={generateReports} disabled={$selectedStocks.length === 0} class="bg-blue-900 text-white uppercase py-4 px-4 mt-2 rounded-lg hover:bg-blue-800 transition-colors duration-300 ease-in-out cursor-pointer disabled:bg-blue-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled: shadow-xl">
+                <button on:click={generateReports} disabled={$selectedStocks.length === 0} class="bg-blue-900 text-white uppercase py-4 px-4 rounded-lg hover:bg-blue-800 transition-colors duration-300 ease-in-out cursor-pointer disabled:bg-blue-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled: shadow-xl">
                     Generate Report{$selectedStocks.length === 1 ? '' : 's' }
                 </button>
             </div>
@@ -68,6 +71,7 @@
         </section>
     {:else if currentPanel === 'output'}
         <section>
+            <h1 class="text-xl text-center">Your Reports:</h1>
             {#each $selectedStocks as stock}
                 {@const report = stockReportData.find(s => s.ticker === stock.ticker)?.report || "No report available"}
                 <ReportContainer {stock} {report}/>
