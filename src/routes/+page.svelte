@@ -54,7 +54,7 @@
                         <TickerDisplay ticker={stock.ticker} days={stock.days}/>
                     {/each}
                 {:else}
-                    <div class="ticker-box flex flex-col md:flex-row justify-between items-center bg-gray-700 text-white py-3 mt-1 pl-3 pr-3 mb-2 w-2/3">
+                    <div class="ticker-box flex flex-col md:flex-row justify-between items-center bg-gray-700 text-white py-3 mb-2 pl-3 pr-3 w-4/5">
                         Your selected tickers will appear here...
                     </div>
                 {/if}
