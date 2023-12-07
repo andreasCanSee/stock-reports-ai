@@ -36,7 +36,6 @@
           }
         });
         dispatch('message', { text: message, type: type });
-        console.log('Nach ADD:', $selectedStocks)
     }
 </script>
 
@@ -47,5 +46,3 @@
     </span>
     <button class="add-ticker-suggestion-btn bg-white text-black rounded-lg text-lg font-bold ml-2 py-1 px-3" on:click={addStock}>+</button>
   </div>
-
-  

@@ -85,12 +85,3 @@
 <footer class="text-center">
     <p class="text-sm">&copy; This is not real financial advice!</p>
 </footer>
-
-<style>
-
-    /* Only for Help in Designing 
-    div, main, section {
-        border: black dashed;
-    }*/
-    
-</style>
