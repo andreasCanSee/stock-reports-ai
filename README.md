@@ -143,7 +143,7 @@ The most significant enhancement in **Stock Reports AI** is the division into a 
                 }
             }
     - `localhost:3000/api/company/links?q={companyName}`: Generates three links to pages with further information about the company represented by `companyName`, though it's still prone to hallucinations.
-        - Returns a JSON object with the status and data fields. The `data` field contains the `companyName` and an array of `links`. Each link object in the array includes a `description` and a `link`. For example, a response for Apple Inc. might look like:
+        - Returns a JSON object with the status and data fields. The `data` field contains the `companyName` and an array of `links`. Each link object in the array includes a `description` and a `link`.
             ```json
             {
                 "status": "success",
