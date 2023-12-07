@@ -199,6 +199,7 @@ Before you start, ensure you have [Node.js](https://nodejs.org/en) installed on 
     npm run dev
     ```
     This command starts the Svelte development server, making the frontend accessible through a web browser.
+    - In some environments, you might need to use `sudo` to start the development server, especially if it requires to bind to a privileged port or if there are permission-related issues. If so, use `sudo npm run dev`. However, be cautious with sudo as it grants elevated privileges.
 
 
 ### Accessing the Application
@@ -210,6 +211,5 @@ Once both servers are running, you can access the frontend of the application. T
         
     
 - The URL (http://localhost:5173/ in this case) might vary depending on your Vite configuration and the available ports on your machine. Use the URL provided in your terminal to access the application.
-- In some environments, you might need to use `sudo`` to start the development server, especially if it requires to bind to a privileged port or if there are permission-related issues. If so, use `sudo npm run dev`. However, be cautious with sudo as it grants elevated privileges.
 
 ## To Be Continued...
